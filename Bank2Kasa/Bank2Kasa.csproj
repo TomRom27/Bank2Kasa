@@ -86,6 +86,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Data\KSOPER.PAS" />
+    <None Include="Data\OPR2018.DAT" />
+    <None Include="Data\REINDEX.PAS" />
+    <None Include="Data\StDate.pas" />
+    <None Include="Data\tpdate.pas" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -94,6 +99,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BTreeFileUtil\BTreeFileUtil.csproj">
+      <Project>{0c0c5057-0a84-46cc-9afc-a2a04412fb84}</Project>
+      <Name>BTreeFileUtil</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
