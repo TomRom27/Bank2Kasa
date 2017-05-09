@@ -8,5 +8,9 @@ namespace BTreeFileUtil
 {
     public class BTreeFile
     {
+        public BTreeFile(string filename, int recSize, bool useDeleteTag)
+        {
+
+        }
     }
 }
