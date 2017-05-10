@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace WUHelper
 {
     [Serializable]
-    public struct Forsa
+    public struct WUForsa
     {
         private const int Denominator = 1000;
 
-        public Forsa(decimal amount)
+        public WUForsa(decimal amount)
         {
             wuInternal = 0;
         }

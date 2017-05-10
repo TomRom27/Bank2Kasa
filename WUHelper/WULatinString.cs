@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WUHelper
 {
-    public class LatinString
+    public class WULatinString
     {
     }
 }
