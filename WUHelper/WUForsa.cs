@@ -17,7 +17,7 @@ namespace WUHelper
         public WUForsa(decimal amount)
         {
             wuInternal = 0;
-            Bytes = new byte[0];
+            Amount = amount;
         }
 
 
@@ -32,8 +32,5 @@ namespace WUHelper
 
         [FieldOffset(0)]
         private int wuInternal;
-
-        [FieldOffset(0)]
-        private byte[] Bytes;
     }
 }

@@ -19,14 +19,13 @@ namespace UnitTests
             record.Kwota = new WUHelper.WUForsa(100);
             record.Stan = new WUHelper.WUForsa(200);
 
-            BinaryFormatter bf = new BinaryFormatter();
-            MemoryStream ms = new MemoryStream();
-            bf.Serialize(ms, record.Kwota);
+            byte[] bytes;
+
+            bytes = Struct2Bytes(record);
 
             using (var file = File.OpenWrite(filename))
             {
-                var writer = new BinaryFormatter();
-                writer.Serialize(file, record); // Writes the entire list.
+                file.Write(bytes, 0, bytes.Length);
             }
         }
 
@@ -74,5 +73,19 @@ StartReadXML startXML=new StartReadXML();
             startXML.Description = "test";
           
          */
+
+        public byte[] Struct2Bytes(OprRecord startXML)
+        {
+            int sizestartXML = System.Runtime.InteropServices.Marshal.SizeOf(startXML);//Get size of struct data
+            byte[] startXML_buf = new byte[sizestartXML];//declare byte array and initialize its size
+            IntPtr ptr = System.Runtime.InteropServices.Marshal.AllocHGlobal(sizestartXML);//pointer to byte array
+
+            System.Runtime.InteropServices.Marshal.StructureToPtr(startXML, ptr, true);
+            System.Runtime.InteropServices.Marshal.Copy(ptr, startXML_buf, 0, sizestartXML);
+            System.Runtime.InteropServices.Marshal.FreeHGlobal(ptr);
+
+            return startXML_buf;
+        }
+
     }
 }
