@@ -18,10 +18,10 @@ namespace BTreeFileUtil
         private byte[] buffer;
 
 
-        public BTreeFile(string filename, int recSize, bool useDeleteTag)
+        public BTreeFile(string filename, Type recStructType , bool useDeleteTag)
         {
             this.filename = filename;
-            this.recSize = recSize;
+            //todo this.recSize = recSize;
             this.useDeleteTag = useDeleteTag;
 
             isOpen = false;
@@ -93,14 +93,14 @@ namespace BTreeFileUtil
         #endregion
     }
 
-    public class BTreeFileHeader
+    public struct BTreeFileHeader
     {
-        int FirstFree { get; set; }
-        int I2 { get; set; }
-        int I3 { get; set; }
-        int RecLen { get; set; }
-        int I5 { get; set; }
-        bool AllowDup { get; set; }
+        public int FirstFree;
+        public int NumFree;
+        public int NumRec;
+        public int RecLen;
+        public int I5;
+        bool AllowDup;
     }
 
     public class DeleteTagRecord

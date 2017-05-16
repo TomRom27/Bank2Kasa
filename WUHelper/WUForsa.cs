@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 namespace WUHelper
 {
-    [Serializable]
     [StructLayout(LayoutKind.Explicit)]
     public struct WUForsa
     {

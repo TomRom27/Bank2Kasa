@@ -15,9 +15,16 @@ namespace UnitTests
         {
 
             string filename = "test.data";
-            OprRecord record = new OprRecord();
-            record.Kwota = new WUHelper.WUForsa(100);
-            record.Stan = new WUHelper.WUForsa(200);
+            OprRecord record = new OprRecord(1);
+            //record.Kwota.Amount = 100;
+            //record.Przyjeto.Amount = 100;
+            //record.Wydano.Amount = 200;
+            //record.Stan.Amount = 200;
+            //record.Typ.Value = "02";
+            record.TypArray[0] = 1;
+            record.TypArray[1] = 48;
+            //record.Data.Value = new DateTime(2018, 1, 1);
+
 
             byte[] bytes;
 
@@ -41,37 +48,7 @@ namespace UnitTests
                     Handle.Free();
                 }
                 */
-
         /*
-         int sizestartXML = Marshal.SizeOf(startXML);//Get size of struct data
-            byte[] startXML_buf = new byte[sizestartXML];//declare byte array and initialize its size
-            IntPtr ptr = Marshal.AllocHGlobal(sizestartXML);//pointer to byte array
- 
-            Marshal.StructureToPtr(startXML, ptr, true);
-            Marshal.Copy(ptr, startXML_buf, 0, sizestartXML);
-            Marshal.FreeHGlobal(ptr);
-         */
-
-        /*
-         struct StartReadXML
-        {
-            public int CmdID;//3
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 50)]
-            public string CmdName;//ReadXML
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 50)]
-            public string Description;//Data to be sent
-        };
-
-
-and
-Hide   Copy Code
-
-StartReadXML startXML=new StartReadXML();
-            startXML.CmdID = 3;
-            //var charCmdName = "s".ToCharArray();            
-            startXML.CmdName = "Sree";
-            startXML.Description = "test";
-          
          */
 
         public byte[] Struct2Bytes(OprRecord startXML)
