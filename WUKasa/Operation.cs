@@ -30,11 +30,11 @@ namespace WUKasa
             set { oprRecord.Data.Value = value; }
         }
 
-        public string OpertionType
-        {
-            get { return WULatinStringHelper.GetStringFromBytes(oprRecord.TypArray); }
-            set { WULatinStringHelper.SetStringToBytes(value, ref oprRecord.TypArray); }
-        }
+        //public string OpertionType
+        //{
+        //    get { return WULatinStringHelper.GetStringFromBytes(oprRecord.TypArray); }
+        //    set { WULatinStringHelper.SetStringToBytes(value, ref oprRecord.TypArray); }
+        //}
 
         //public decimal Amount
         //{

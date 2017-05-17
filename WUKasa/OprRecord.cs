@@ -13,7 +13,8 @@ using WUHelper;
 
 namespace WUKasa
 {
-    [StructLayout(LayoutKind.Explicit, Size = 240)]
+    //[StructLayout(LayoutKind.Explicit, Size = 240)]
+    [StructLayout(LayoutKind.Sequential, Pack =4, Size = 240)]
     public struct OprRecord
     {
         public const byte TypKodSLen = 2;
@@ -27,69 +28,73 @@ namespace WUKasa
         public const int KontoLen = 15;
 
         public OprRecord(object o)
-        {
-            Deleted = 0;
+        { 
+            unchecked
+            {
+                Deleted = 0;
 
-            Data = new WUShortDate(WUShortDateHelper.MinDate);
-            TypArray = new byte[TypKodSLen + 1];
-            KodArray = new byte[OprKodSLen + 1];
-            Nazwa1Array = new byte[OprNazwaSLen + 1];
-            Nazwa2Array = new byte[OprNazwaSLen + 1];
-            MiastoArray = new byte[OprMiastoSLen + 1];
-            UlicaArray = new byte[OprUlicaSLen + 1];
-            RozrArray = new byte[OprRozrSLen + 1];
-            OpisArray = new byte[OprOpisSLen + 1];
-            Kwota = new WUForsa(0);
-            Przyjeto = new WUForsa(0);
-            Wydano = new WUForsa(0);
-            Stan = new WUForsa(0);
-            KontoArray = new byte[KontoLen + 1];
-            NrDrk = 0;
-            Max = 0;
+                Data = new WUShortDate(WUShortDateHelper.MinDate);
+                TypArray = new byte[TypKodSLen + 1];
+                KodArray = new byte[OprKodSLen + 1];
+                Nazwa1Array = new byte[OprNazwaSLen + 1];
+                Nazwa2Array = new byte[OprNazwaSLen + 1];
+                MiastoArray = new byte[OprMiastoSLen + 1];
+                UlicaArray = new byte[OprUlicaSLen + 1];
+                RozrArray = new byte[OprRozrSLen + 1];
+                OpisArray = new byte[OprOpisSLen + 1];
+                Kwota = new WUForsa(0);
+                Przyjeto = new WUForsa(0);
+                Wydano = new WUForsa(0);
+                Stan = new WUForsa(0);
+                KontoArray = new byte[KontoLen + 1];
+                NrDrk = 0;
+                Max = 0;
+            }
         }
 
-        [FieldOffset(0)]
+        //[FieldOffset(0)]
         public TpLong Deleted;
-        [FieldOffset(4)]
+        //[FieldOffset(4)]
         public WUShortDate Data;
-        [FieldOffset(6)]
+        //[FieldOffset(6)]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = TypKodSLen + 1)]
         public byte[] TypArray;
-        [FieldOffset(9)]
+
+        //[FieldOffset(9)]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = OprKodSLen + 1)]
         public byte[] KodArray;
-        [FieldOffset(15)]
+        //[FieldOffset(15)]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = OprNazwaSLen + 1)]
         public byte[] Nazwa1Array;
-        [FieldOffset(46)]
+        //[FieldOffset(46)]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = OprNazwaSLen + 1)]
         public byte[] Nazwa2Array;
-        [FieldOffset(77)]
+        //[FieldOffset(77)]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = OprMiastoSLen + 1)]
         public byte[] MiastoArray;
-        [FieldOffset(113)]
+        //[FieldOffset(113)]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = OprUlicaSLen + 1)]
         public byte[] UlicaArray;
-        [FieldOffset(138)]
+        //[FieldOffset(138)]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = OprRozrSLen + 1)]
         public byte[] RozrArray;
-        [FieldOffset(149)]
+        //[FieldOffset(149)]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = OprOpisSLen + 1)]
         public byte[] OpisArray;
-        [FieldOffset(185)]
+        //[FieldOffset(185)]
         public WUForsa Kwota;
-        [FieldOffset(193)]
+        //[FieldOffset(193)]
         public WUForsa Przyjeto;
-        [FieldOffset(201)]
+        //[FieldOffset(201)]
         public WUForsa Wydano;
-        [FieldOffset(209)]
+        //[FieldOffset(209)]
         public WUForsa Stan;
-        [FieldOffset(217)]
+        //[FieldOffset(217)]
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = KontoLen + 1)]
         public byte[] KontoArray;
-        [FieldOffset(233)]
+        //[FieldOffset(233)]
         public TpWord NrDrk;
-        [FieldOffset(235)]
+        //[FieldOffset(235)]
         public TpLong Max;
 
 
