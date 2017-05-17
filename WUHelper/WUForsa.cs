@@ -11,25 +11,24 @@ namespace WUHelper
     public struct WUForsa
     {
         [NonSerialized]
-        private const int Denominator = 1000;
+        private const int Denominator = 100;
 
         public WUForsa(decimal amount)
         {
             wuInternal = 0;
-            Amount = amount;
+            Value = amount;
         }
 
-
-        public decimal Amount
+        public decimal Value
         {
             get { return Convert.ToDecimal(wuInternal / Denominator);  }
             set
             {
-                wuInternal = Convert.ToInt32(value * Denominator);
+                wuInternal = Convert.ToDouble(value * Denominator);
             }
         }
 
         [FieldOffset(0)]
-        private int wuInternal;
+        private double wuInternal;
     }
 }

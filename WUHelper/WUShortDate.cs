@@ -10,7 +10,7 @@ namespace WUHelper
 
     public static class WUShortDateHelper
     {
-        public static DateTime MinDate = new DateTime(1600, 1, 1);
+        public static DateTime MinDate = new DateTime(1900, 1, 1);
     }
 
     [StructLayout(LayoutKind.Explicit)]
@@ -26,11 +26,11 @@ namespace WUHelper
             get { return WUShortDateHelper.MinDate.AddDays(wuInternal); }
             set
             {
-                wuInternal = (value - WUShortDateHelper.MinDate).Days;
+                wuInternal = Convert.ToUInt16((value - WUShortDateHelper.MinDate).Days);
             }
         }
 
         [FieldOffset(0)]
-        private int wuInternal;
+        private ushort wuInternal;
     }
 }

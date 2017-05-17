@@ -40,10 +40,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Operation.cs" />
     <Compile Include="OprRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BTreeFileUtil\BTreeFileUtil.csproj">
+      <Project>{0c0c5057-0a84-46cc-9afc-a2a04412fb84}</Project>
+      <Name>BTreeFileUtil</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WUHelper\WUHelper.csproj">
       <Project>{60146ea3-e75d-4fb6-8edf-e68b20c64dac}</Project>
       <Name>WUHelper</Name>

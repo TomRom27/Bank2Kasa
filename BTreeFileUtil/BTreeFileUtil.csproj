@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BTreeFile.cs" />
+    <Compile Include="IBTreeRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StructHelper.cs" />
   </ItemGroup>
