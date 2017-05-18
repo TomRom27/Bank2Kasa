@@ -16,7 +16,7 @@ namespace BTreeFileUtil
         private bool isOpen;
         private bool disposed;
         private byte[] buffer;
-
+        private 
 
         public BTreeFile(string filename, Type recStructType , bool useDeleteTag)
         {
@@ -38,7 +38,7 @@ namespace BTreeFileUtil
 
         }
 
-        public object Get(long pos)
+        public object Get(int pos)
         {
             return null; // todo
         }
@@ -47,8 +47,20 @@ namespace BTreeFileUtil
         {
             if (isOpen)
             {
-                // todo
+                WriteHeader();
+                isOpen = false;
+                // todo file close
             }
+        }
+
+        private void WriteHeader()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ReadHeader()
+        {
+
         }
 
         private long GetStreamPos(int recNumber)
@@ -59,6 +71,7 @@ namespace BTreeFileUtil
         #region IDisposable related
         public void Dispose()
         {
+            Close();
             Dispose(true);
 
             // Use SupressFinalize in case a subclass 
@@ -89,11 +102,5 @@ namespace BTreeFileUtil
         public int RecLen;
         public int I5;
         bool AllowDup;
-    }
-
-    public class DeleteTagRecord
-    {
-        int NextDeletedPos { get; set; }
-        object Data;
     }
 }
