@@ -24,11 +24,11 @@ namespace WUHelper
             get { return Convert.ToDecimal(wuInternal / Denominator);  }
             set
             {
-                wuInternal = Convert.ToDouble(value * Denominator);
+                wuInternal = Convert.ToInt64(value * Denominator);
             }
         }
 
         [FieldOffset(0)]
-        private double wuInternal;
+        private Int64 wuInternal;
     }
 }

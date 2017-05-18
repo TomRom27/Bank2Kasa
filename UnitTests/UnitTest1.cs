@@ -12,15 +12,7 @@ namespace UnitTests
 {
 
 
-    //[StructLayout(LayoutKind.Explicit, Size = 7)]
-    //public struct TestStruct
-    //{
-    //    [FieldOffset(0)]
-    //    public System.Int32 del;
 
-    //    [FieldOffset(4)]
-    //    public System.UInt16 dt;
-    //}
 
     [TestClass]
     public class UnitTest1
@@ -83,43 +75,26 @@ namespace UnitTests
             string filename = "opr2018.dat";
 
             byte[] recBytes = new byte[240];
+            Operation[] oprs = new Operation[4+1];
 
             using (var file = File.OpenRead(filename))
             {
+
                 file.Seek(240, SeekOrigin.Begin);
                 file.Read(recBytes, 0, 240);
+                oprs[1] = new Operation(recBytes);
+                file.Read(recBytes, 0, 240);
+                oprs[2] = new Operation(recBytes);
+                file.Read(recBytes, 0, 240);
+                oprs[3] = new Operation(recBytes);
+                file.Read(recBytes, 0, 240);
+                oprs[4] = new Operation(recBytes);
             }
             OprRecord oprRec = StructHelper.BytesToStruct<OprRecord>(ref recBytes);
 
             Operation opr = new Operation(recBytes);
         }
-        /*
 
-                private void ByteToStruct(byte[] Buffer, ref TMenuDataStruct Struct)
-                {
-                    IntPtr pCurrentPosition;
-                    GCHandle Handle = GCHandle.Alloc(Buffer, GCHandleType.Pinned);
-                    pCurrentPosition = Handle.AddrOfPinnedObject();
-                    Struct = Convert.ChangeType(Marshal.PtrToStructure(pCurrent Position,
-                    TMenuDataStruct), TMenuDataStruct);
-                    Handle.Free();
-                }
-                */
-        /*
-         */
-
-        public byte[] Struct2Bytes(OprRecord startXML)
-        {
-            int sizestartXML = System.Runtime.InteropServices.Marshal.SizeOf(startXML);//Get size of struct data
-            byte[] startXML_buf = new byte[sizestartXML];//declare byte array and initialize its size
-            IntPtr ptr = System.Runtime.InteropServices.Marshal.AllocHGlobal(sizestartXML);//pointer to byte array
-
-            System.Runtime.InteropServices.Marshal.StructureToPtr(startXML, ptr, true);
-            System.Runtime.InteropServices.Marshal.Copy(ptr, startXML_buf, 0, sizestartXML);
-            System.Runtime.InteropServices.Marshal.FreeHGlobal(ptr);
-
-            return startXML_buf;
-        }
 
     }
 }
