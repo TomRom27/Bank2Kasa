@@ -9,5 +9,8 @@ namespace BTreeFileUtil
     public interface IBTreeRecord
     {
         byte[] GetBytes();
+        void SetFromBytes(byte[] bytes);
+
+        int GetSize();
     }
 }

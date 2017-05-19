@@ -10,26 +10,38 @@ namespace WUKasa
 {
     public class OperationStore
     {
+        public const string FileNameTemplate = "OPR{0}.DAT";
         private int currentMax;
-        private BTreeFile btreeFile;
+        private BTreeFile<Operation> btreeFile;
 
-        public OperationStore(int year)
+        public OperationStore(int year, string path)
         {
-            currentMax = -1;
-            //btreeFile = new BTreeFile()
+            currentMax = 0;
+            btreeFile = new BTreeFile<Operation>(System.IO.Path.Combine(path, String.Format(FileNameTemplate, year)));
         }
 
         public void Add(Operation operation)
         {
             EnsureMax();
+            currentMax++;
             operation.Max = currentMax;
             btreeFile.Add(operation);
-            currentMax++;
+
         }
 
         private void EnsureMax()
         {
-            // todo
+            if (currentMax == 0)
+            {
+                btreeFile.Open();
+
+                for (int i = 1; i <= btreeFile.TotalRecordNumber - 1; i++)
+                {
+                    Operation opr = btreeFile.Get(i);
+                    if (!opr.isDeleted)
+                        currentMax = Math.Max(currentMax, opr.Max);
+                }
+            }
         }
     }
 }

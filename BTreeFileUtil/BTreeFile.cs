@@ -2,45 +2,61 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BTreeFileUtil
 {
-    public class BTreeFile : IDisposable
+    public class BTreeFile<T> : IDisposable where T : IBTreeRecord, new()
     {
         private string filename;
-        private int recSize;
-        private bool useDeleteTag;
+        private int dataSize;
+        private byte[] dataBuffer;
+        private FileStream dataFile;
+        private BTreeFileHeader header;
         private bool isOpen;
         private bool disposed;
-        private byte[] buffer;
-        private 
 
-        public BTreeFile(string filename, Type recStructType , bool useDeleteTag)
+        public BTreeFile(string filename )
         {
             this.filename = filename;
-            //todo this.recSize = recSize;
-            this.useDeleteTag = useDeleteTag;
-
+            dataSize = new T().GetSize();
+            dataBuffer = new byte[dataSize];
             isOpen = false;
             disposed = false;
+            header = new BTreeFileHeader();
+        }
+
+        public int TotalRecordNumber
+        {
+            get { return header.TotalRecordNumber; }
         }
 
         public void Open()
         {
-
+            dataFile = File.Open(filename, FileMode.Open, FileAccess.ReadWrite);
+            ReadHeader();
+            isOpen = true;
         }
 
-        public void Add(object o)
+        public void Add(T o)
         {
 
         }
 
-        public object Get(int pos)
+        public T Get(int recPos)
         {
-            return null; // todo
+            if (recPos > header.TotalRecordNumber)
+                throw new ArgumentOutOfRangeException($"Expected record position {recPos} is bigger then allowed {header.TotalRecordNumber}");
+
+            dataFile.Seek(recPos * dataSize, SeekOrigin.Begin);
+            dataFile.Read(dataBuffer, 0, dataSize);
+
+            T o = new T();
+            o.SetFromBytes(dataBuffer);
+
+            return o;
         }
 
         public void Close()
@@ -48,8 +64,8 @@ namespace BTreeFileUtil
             if (isOpen)
             {
                 WriteHeader();
+                dataFile.Close();
                 isOpen = false;
-                // todo file close
             }
         }
 
@@ -60,12 +76,10 @@ namespace BTreeFileUtil
 
         private void ReadHeader()
         {
-
-        }
-
-        private long GetStreamPos(int recNumber)
-        {
-            return 0; // todo
+            byte[] headerBytes = new byte[Marshal.SizeOf(header)];
+            dataFile.Seek(0, SeekOrigin.Begin);
+            dataFile.Read(headerBytes, 0, headerBytes.Length);
+            header = StructHelper.BytesToStruct<BTreeFileHeader>(ref headerBytes);
         }
 
         #region IDisposable related
@@ -94,13 +108,19 @@ namespace BTreeFileUtil
         #endregion
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct BTreeFileHeader
     {
         public int FirstFree;
-        public int NumFree;
-        public int NumRec;
-        public int RecLen;
+        public int DeletedRecordsNumber;
+        public int RecordsNumber;
+        public int RecordLength;
         public int I5;
         bool AllowDup;
+
+        public int TotalRecordNumber
+        {
+            get { return DeletedRecordsNumber + RecordsNumber; }
+        }
     }
 }

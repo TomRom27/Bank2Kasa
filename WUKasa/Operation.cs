@@ -24,6 +24,11 @@ namespace WUKasa
         }
 
         #region properties
+        public bool isDeleted
+        {
+            get { return oprRecord.Deleted != 0; }
+        }
+
         public DateTime Date
         {
             get { return oprRecord.Data.Value; }
@@ -121,6 +126,18 @@ namespace WUKasa
         public byte[] GetBytes()
         {
             return StructHelper.StructToBytes<OprRecord>(oprRecord);
+        }
+
+        public void SetFromBytes(byte[] bytes)
+        {
+            byte[] data = bytes.ToArray();
+
+            oprRecord = StructHelper.BytesToStruct<OprRecord>(ref data);
+        }
+
+        public int GetSize()
+        {
+            return System.Runtime.InteropServices.Marshal.SizeOf(typeof(OprRecord));
         }
         #endregion
     }

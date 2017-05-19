@@ -32,7 +32,7 @@ namespace UnitTests
             //bytes = StructHelper.StructToBytes(sd);
 
             OprRecord rec = new OprRecord();
-            rec.Data.Value = new DateTime(2018,1,1);
+            rec.Data.Value = new DateTime(2018, 1, 1);
             rec.Kwota.Value = 100000000000000;
 
             bytes = StructHelper.StructToBytes(rec);
@@ -75,7 +75,7 @@ namespace UnitTests
             string filename = "opr2018.dat";
 
             byte[] recBytes = new byte[240];
-            Operation[] oprs = new Operation[4+1];
+            Operation[] oprs = new Operation[4 + 1];
 
             using (var file = File.OpenRead(filename))
             {
@@ -96,5 +96,15 @@ namespace UnitTests
         }
 
 
+        [TestMethod]
+        public void CanAdd1Operation()
+        {
+            int year = 2018;
+
+            OperationStore store = new OperationStore(year, "");
+            Operation operation = new Operation();
+
+            store.Add(operation);
+        }
     }
 }
