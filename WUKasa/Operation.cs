@@ -24,6 +24,8 @@ namespace WUKasa
         }
 
         #region properties
+        public bool IsCardOperation { get; set; }
+
         public bool isDeleted
         {
             get { return oprRecord.Deleted != 0; }

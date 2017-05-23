@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\Unit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WUKasa", "WUKasa\WUKasa.csproj", "{5928C566-6275-4DC0-911B-93D25E574471}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mBankData", "mBankData\mBankData.csproj", "{35B6FB5E-8397-471A-83CF-0771FD27B1B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{5928C566-6275-4DC0-911B-93D25E574471}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5928C566-6275-4DC0-911B-93D25E574471}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5928C566-6275-4DC0-911B-93D25E574471}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35B6FB5E-8397-471A-83CF-0771FD27B1B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35B6FB5E-8397-471A-83CF-0771FD27B1B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35B6FB5E-8397-471A-83CF-0771FD27B1B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35B6FB5E-8397-471A-83CF-0771FD27B1B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

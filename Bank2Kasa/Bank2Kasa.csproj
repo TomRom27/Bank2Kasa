@@ -55,6 +55,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Service\DataImporter.cs" />
+    <Compile Include="Service\OperationService.cs" />
+    <Compile Include="ViewModel\OperationVM.cs" />
+    <Compile Include="ViewModel\SupportedImport.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -105,7 +109,16 @@
       <Project>{0c0c5057-0a84-46cc-9afc-a2a04412fb84}</Project>
       <Name>BTreeFileUtil</Name>
     </ProjectReference>
+    <ProjectReference Include="..\mBankData\mBankData.csproj">
+      <Project>{35b6fb5e-8397-471a-83cf-0771fd27b1b7}</Project>
+      <Name>mBankData</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WUKasa\WUKasa.csproj">
+      <Project>{5928c566-6275-4dc0-911b-93d25e574471}</Project>
+      <Name>WUKasa</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
