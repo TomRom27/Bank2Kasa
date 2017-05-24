@@ -45,7 +45,9 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </Otherwise>
   </Choose>
@@ -53,6 +55,7 @@
     <Compile Include="StructTests.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ImportTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Bank2Kasa\Bank2Kasa.csproj">
@@ -62,6 +65,10 @@
     <ProjectReference Include="..\BTreeFileUtil\BTreeFileUtil.csproj">
       <Project>{0c0c5057-0a84-46cc-9afc-a2a04412fb84}</Project>
       <Name>BTreeFileUtil</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\mBankData\mBankData.csproj">
+      <Project>{35b6fb5e-8397-471a-83cf-0771fd27b1b7}</Project>
+      <Name>mBankData</Name>
     </ProjectReference>
     <ProjectReference Include="..\WUHelper\WUHelper.csproj">
       <Project>{60146ea3-e75d-4fb6-8edf-e68b20c64dac}</Project>
@@ -73,9 +80,20 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="mbank.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="multi.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="OPR2018.DAT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="mbank.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

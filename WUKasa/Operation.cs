@@ -11,6 +11,17 @@ namespace WUKasa
 {
     public class Operation : IBTreeRecord
     {
+        #region
+        public const string OperationOutGeneral = "00";
+        public const string OperationOutHousehold = "04";
+        public const string OperationOutHouseholdPrio = "34";
+        public const string OperationInGeneral = "10";
+        public const string OperationInTransfer = "15";
+        public const string OperationInCard = "13";
+        public const string OperationInCashout = "12";
+        private const string AccountTemplate = "500-0{0}-{1}";
+        #endregion
+
         private OprRecord oprRecord;
 
         public Operation()
@@ -23,6 +34,10 @@ namespace WUKasa
             oprRecord = StructHelper.BytesToStruct<OprRecord>(ref record);
         }
 
+        public static string FormAccount(string code, string trashold)
+        {
+            return String.Format(AccountTemplate, code, trashold);
+        }
         #region properties
         public bool IsCardOperation { get; set; }
 

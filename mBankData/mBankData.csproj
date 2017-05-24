@@ -41,6 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CsvExportProvider.cs" />
+    <Compile Include="mBankConsts.cs" />
+    <Compile Include="mBankOperation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

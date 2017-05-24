@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WUKasa", "WUKasa\WUKasa.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mBankData", "mBankData\mBankData.csproj", "{35B6FB5E-8397-471A-83CF-0771FD27B1B7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvvmLight.Extensions", "MvvmLight.Extensions\MvvmLight.Extensions.csproj", "{6EFA876B-1755-4D8B-97CB-B189A213115D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{35B6FB5E-8397-471A-83CF-0771FD27B1B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35B6FB5E-8397-471A-83CF-0771FD27B1B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35B6FB5E-8397-471A-83CF-0771FD27B1B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EFA876B-1755-4D8B-97CB-B189A213115D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EFA876B-1755-4D8B-97CB-B189A213115D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EFA876B-1755-4D8B-97CB-B189A213115D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EFA876B-1755-4D8B-97CB-B189A213115D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

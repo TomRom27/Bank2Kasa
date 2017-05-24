@@ -8,10 +8,16 @@ using WUKasa;
 
 namespace Bank2Kasa.ViewModel
 {
-    public class OperationVM
+    public class OperationVM : GalaSoft.MvvmLight.ViewModelBase
     {
         private Operation operation;
 
+        public OperationVM()
+        {
+            this.operation = new Operation();
+        }
+
+        [GalaSoft.MvvmLight.Ioc.PreferredConstructor]
         public OperationVM(Operation operation)
         {
             this.operation = operation;
@@ -19,5 +25,31 @@ namespace Bank2Kasa.ViewModel
         }
 
         public bool IsIgnore { get; set; }
+
+        public DateTime Date
+        {
+            get
+            {
+                return operation.Date;
+            }
+            set
+            {
+                operation.Date = value;
+                RaisePropertyChanged(nameof(Date));
+            }
+        }
+
+        public string Description
+        {
+            get
+            {
+                return operation.Description;
+            }
+            set
+            {
+                operation.Description = value;
+                RaisePropertyChanged(nameof(Description));
+            }
+        }
     }
 }
