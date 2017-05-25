@@ -21,7 +21,7 @@ namespace mBankData
         public void Import(string filename, string trashold)
         {
             int lineNo = 0;
-            using (var file = new StreamReader(filename))
+            using (var file = new StreamReader(filename, Encoding.GetEncoding(1250)))
             {
                 while (!file.EndOfStream)
                 {
@@ -78,6 +78,11 @@ namespace mBankData
             opr.Date = mBOperation.OperationDate;
             opr.Description = mBOperation.Title;
             opr.Name1 = mBOperation.SenderReceiver;
+            if (opr.Name1.Length < mBOperation.SenderReceiver.Length)
+                opr.Name2 = mBOperation.SenderReceiver.Substring(opr.Name1.Length);
+
+            opr.BankOperationType = mBOperation.OperationDescription;
+            opr.FullDescription = mBOperation.Title;
 
             if (mBOperation.Ammount < 0)
             {

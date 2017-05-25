@@ -51,5 +51,43 @@ namespace Bank2Kasa.ViewModel
                 RaisePropertyChanged(nameof(Description));
             }
         }
+
+        public string BankOperationDescription
+        {
+            get
+            {
+                if (operation is ImportedOperation)
+                    return ((ImportedOperation)operation).BankOperationType;
+                else
+                    return "";
+            }
+            set
+            {
+                if (operation is ImportedOperation)
+                {
+                    ((ImportedOperation)operation).BankOperationType = value;
+                    RaisePropertyChanged(nameof(BankOperationDescription));
+                }
+            }
+        }
+
+        public string FullDescription
+        {
+            get
+            {
+                if (operation is ImportedOperation)
+                    return ((ImportedOperation)operation).FullDescription;
+                else
+                    return "";
+            }
+            set
+            {
+                if (operation is ImportedOperation)
+                {
+                    ((ImportedOperation)operation).FullDescription = value;
+                    RaisePropertyChanged(nameof(FullDescription));
+                }
+            }
+        }
     }
 }

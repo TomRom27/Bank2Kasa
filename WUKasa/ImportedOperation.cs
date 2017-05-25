@@ -9,10 +9,8 @@ namespace WUKasa
     public class ImportedOperation : Operation
     {
         public object OperationOrigin { get; set; }
-    }
 
-    public class ImportedOperationEventArgs : EventArgs
-    {
-        public ImportedOperation Operation;
+        public string BankOperationType { get; set; }
+        public string FullDescription { get; set; }
     }
 }

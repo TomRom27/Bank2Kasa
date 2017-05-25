@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using MvvmLight.Extensions;
 
 using Bank2Kasa.Service;
+using GalaSoft.MvvmLight.Command;
 
 namespace Bank2Kasa.ViewModel
 {
@@ -25,6 +26,8 @@ namespace Bank2Kasa.ViewModel
                 Operations.Add(new OperationVM(new WUKasa.Operation() { Amount = 100, Description = "Operacja przychodowa", Date = DateTime.Today }));
 
             //}
+
+            CreateCommands();
         }
 
         [GalaSoft.MvvmLight.Ioc.PreferredConstructor]
@@ -45,5 +48,33 @@ namespace Bank2Kasa.ViewModel
                 RaisePropertyChanged(nameof(Operations));
             }
         }
+
+        #region Commands
+
+        public RelayCommand Save { get; set; }
+        public RelayCommand Import { get; set; }
+
+        #endregion
+
+        #region private methods
+
+        private void CreateCommands()
+        {
+            Save = new RelayCommand(SaveData);
+            Import = new RelayCommand(ImportData);
+
+        }
+
+        private void ImportData()
+        {
+            // todo
+            Operations = operationService.ImportFromFile(SupportedImport.mBankCsv, "mbank.csv", "1");
+        }
+
+        private void SaveData()
+        {
+
+        }
+        #endregion
     }
 }

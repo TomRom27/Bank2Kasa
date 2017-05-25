@@ -14,25 +14,36 @@ namespace Bank2Kasa.Service
     public interface IOperationService
     {
         void Save(List<OperationVM> list);
-        ObservableCollection<OperationVM> ImportFromFile(string filename, string trashold);
+        ObservableCollection<OperationVM> ImportFromFile(SupportedImport importType, string filename, string trashold);
 
     }
 
     public class OperationService : IOperationService
     {
-        public ObservableCollection<OperationVM> ImportFromFile(string filename, string trashold)
+        public ObservableCollection<OperationVM> ImportFromFile(SupportedImport importType, string dataFilename, string trashold)
         {
-            ObservableCollection<OperationVM> collection = new ObservableCollection<OperationVM>();
-
-            DataImporter importer = new DataImporter();
-
-            var list = importer.Import(SupportedImport.mBankCsv, "mBank.csv", new ImportConfiguration());
-            foreach (var o in list)
+            switch (importType)
             {
-                collection.Add(o);
+                case SupportedImport.mBankCsv:
+                    {
+                        return ImportFromMBankCsv(dataFilename, new ImportConfiguration() , trashold);
+                    }
+                default: return new ObservableCollection<OperationVM>();
             }
+        }
 
-            return collection;
+        private ObservableCollection<OperationVM> ImportFromMBankCsv(string dataFilename, ImportConfiguration cfg, string trashold)
+        {
+            ObservableCollection<OperationVM> list = new ObservableCollection<OperationVM>();
+            var importer = new mBankData.CsvExportProvider(cfg);
+
+            importer.OperationImported += delegate (object sender, ImportedOperation args)
+            {
+                list.Add(new OperationVM(args));
+            };
+
+            importer.Import(dataFilename, trashold);
+            return list;
         }
 
         public void Save(List<OperationVM> list)

@@ -11,24 +11,18 @@
              >
     <DockPanel LastChildFill="True">
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-            <Button Content="Import" Height="40" Width="60" Command=""/>
+            <Button Content="Import" Height="40" Width="60" Command="{Binding Import}"/>
         </StackPanel>
-        <ItemsControl Grid.Row="1"
-              ItemsSource="{Binding Operations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel Orientation="Horizontal"
-                 IsItemsHost="True" />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type local:OperationView}">
-                    <local:OperationView Margin="5" Width="500" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Operations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:OperationView}">
+                        <local:OperationView Margin="5" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
-        
+        </ScrollViewer>
     </DockPanel>
-    
+
 </UserControl>
