@@ -24,12 +24,55 @@ namespace WUHelper
         public static byte Utf16Char2Latin2Byte(char c)
         {
             // todo conversion from Unicode to Latin2
-            return Encoding.ASCII.GetBytes(new char[] { c })[0];
+            switch (c)
+            {
+                case 'Ą': return 0;
+                case 'Ć': return 0;
+                case 'Ę': return 0;
+                case 'Ł': return 0;
+                case 'Ń': return 0;
+                case 'Ó': return 0;
+                case 'Ś': return 0;
+                case 'Ź': return 0;
+                case 'Ż': return 0;
+                case 'ą': return 0;
+                case 'ć': return 0;
+                case 'ę': return 0;
+                case 'ł': return 0;
+                case 'ń': return 0;
+                case 'ó': return 0;
+                case 'ś': return 0;
+                case 'ź': return 0;
+                case 'ż': return 0;
+                default: return Encoding.ASCII.GetBytes(new char[] { c })[0];
+            }
+
         }
 
-        public static string Latin2Byte2Uth16Char(byte b)
+        public static char Latin2Byte2Uth16Char(byte b)
         {
-            return Encoding.ASCII.GetString(new byte[] { b });
+            switch (b)
+            {
+                case 1: return 'Ą';
+                case 2: return 'Ć';
+                case 3: return 'Ę';
+                case 4: return 'Ł';
+                case 5: return 'Ń';
+                case 6: return 'Ó';
+                case 7: return 'Ś';
+                case 8: return 'Ź';
+                case 9: return 'Ż';
+                case 10: return 'ą';
+                case 11: return 'ć';
+                case 12: return 'ę';
+                case 13: return 'ł';
+                case 14: return 'ń';
+                case 15: return 'ó';
+                case 16: return 'ś';
+                case 17: return 'ź';
+                case 18: return 'ż';
+                default: return Encoding.ASCII.GetChars(new byte[] { b })[0];
+            }
         }
 
     }

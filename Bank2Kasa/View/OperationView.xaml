@@ -5,23 +5,34 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Bank2Kasa.View"
              xmlns:vm="clr-namespace:Bank2Kasa.ViewModel"
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
-             d:DataContext="{d:DesignInstance Type=vm:OperationVM, IsDesignTimeCreatable=True}"
+             xmlns:cnv="clr-namespace:Bank2Kasa.Converters"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="150"
+             d:DataContext="{d:DesignInstance Type=vm:OperationVM, IsDesignTimeCreatable=True}" 
              >
+    <UserControl.Resources>
+        <cnv:PolishDateConverter x:Key="DateConverter" />
+        <cnv:BooleanToVisibility x:Key="VisConverter" />
+    </UserControl.Resources>
     <StackPanel>
-        <StackPanel Name="stpViewPanel" Orientation="Horizontal" Visibility="Visible">
-            <TextBlock Text="{Binding Date}"/>
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="{Binding Description}"/>
-                <TextBlock Text="{Binding FullDescription}"/>
-                <TextBlock Text="{Binding BankOperationDescription}"/>
-            </StackPanel>
-            <TextBlock Text="100,00"/>
-        </StackPanel>
-        <StackPanel Name="stpEditPanel" Orientation="Horizontal" Visibility="Visible">
+        <DockPanel Name="dkpView" LastChildFill="True" Background="Beige" Visibility="{Binding IsNotEditMode, Converter={StaticResource VisConverter}}">
+                <Label DockPanel.Dock="Left" Content="{Binding Date, Converter={StaticResource DateConverter}}" FontSize="16" FontWeight="Bold"/>
 
-        </StackPanel>
+                <Button DockPanel.Dock="Right" Margin="5,0,5,0" Width="100" Command="{Binding ToggleAction}" >
+                    <TextBlock Text="{Binding ActionString}" TextWrapping="WrapWithOverflow" />
+                </Button>
+            <Button DockPanel.Dock="Right" Margin="5,0,5,0" Width="50" Content="Edycja" Command="{Binding StartEdit}" />
+
+            <TextBlock DockPanel.Dock="Right" Margin="5,0,5,0" Text="100,00"/>
+                <StackPanel Margin="5,0,5,0" Orientation="Vertical" MinWidth="50" >
+                    <TextBlock Text="{Binding Description}"/>
+                    <TextBlock Text="{Binding FullDescription}"/>
+                    <TextBlock Text="{Binding BankOperationDescription}"/>
+                </StackPanel>
+            </DockPanel>
+
+        <DockPanel Name="dkpEditPanel" Visibility="{Binding IsEditMode, Converter={StaticResource VisConverter}}">
+            <Button DockPanel.Dock="Right" Margin="5,0,5,0" Width="50" Content="Zakończ" Command="{Binding EndEdit}" />
+        </DockPanel>
     </StackPanel>
 
 

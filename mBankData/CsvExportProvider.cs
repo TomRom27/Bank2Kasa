@@ -76,13 +76,13 @@ namespace mBankData
         {
             ImportedOperation opr = new ImportedOperation();
             opr.Date = mBOperation.OperationDate;
-            opr.Description = mBOperation.Title;
-            opr.Name1 = mBOperation.SenderReceiver;
+            opr.Description = S2Cammel(mBOperation.Title);
+            opr.Name1 = S2Cammel(mBOperation.SenderReceiver);
             if (opr.Name1.Length < mBOperation.SenderReceiver.Length)
                 opr.Name2 = mBOperation.SenderReceiver.Substring(opr.Name1.Length);
 
-            opr.BankOperationType = mBOperation.OperationDescription;
-            opr.FullDescription = mBOperation.Title;
+            opr.BankOperationType = S2Cammel(mBOperation.OperationDescription);
+            opr.FullDescription = S2Cammel(mBOperation.Title);
 
             if (mBOperation.Ammount < 0)
             {
@@ -112,6 +112,8 @@ namespace mBankData
 
         private mBankOperation ParseCsvLine(string line)
         {
+            char[] obsoleteDelimiters = new char[] { '"' }; // todo - add single apostrophe here
+
             var mBankFormatProvider = new CultureInfo(mBankConsts.FormatCulture);
             line = line.Trim();
             if (String.IsNullOrEmpty(line))
@@ -129,9 +131,9 @@ namespace mBankData
             opr.OperationDate = DateTime.Parse(items[0], mBankFormatProvider);
             opr.AccountingDate = DateTime.Parse(items[1], mBankFormatProvider);
             opr.OperationDescription = items[2];
-            opr.Title = items[3];
-            opr.SenderReceiver = items[4];
-            opr.AccountNumber = items[5];
+            opr.Title = items[3].TrimStart(obsoleteDelimiters).TrimEnd(obsoleteDelimiters);
+            opr.SenderReceiver = items[4].TrimStart(obsoleteDelimiters).TrimEnd(obsoleteDelimiters);
+            opr.AccountNumber = items[5].TrimStart(obsoleteDelimiters).TrimEnd(obsoleteDelimiters);
             opr.Ammount = Decimal.Parse(items[6], mBankFormatProvider);
             opr.Balance = Decimal.Parse(items[7], mBankFormatProvider);
 
@@ -147,11 +149,13 @@ namespace mBankData
             // todo
         }
 
+        private string S2Cammel(string s)
+        {
+            if (String.IsNullOrEmpty(s))
+                return s;
 
-
-        /*
-# Data operacji;#Data księgowania;#Opis operacji;#Tytuł;#Nadawca/Odbiorca;#Numer konta;#Kwota;#Saldo po operacji;
-*/
+            return s.Substring(0, 1).ToUpper() + s.Substring(1).ToLower();
+        }
 
     }
 }

@@ -14,12 +14,25 @@
             <Button Content="Import" Height="40" Width="60" Command="{Binding Import}"/>
         </StackPanel>
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-            <ItemsControl ItemsSource="{Binding Operations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left">
+            <ItemsControl ItemsSource="{Binding Operations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" AlternationCount="2">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type local:OperationView}">
-                        <local:OperationView Margin="5" />
+                        <StackPanel Background="Aqua">
+                            <local:OperationView Margin="5"/>
+                        </StackPanel>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Margin" Value="6 3 6 3"/>
+
+                        <Style.Triggers>
+                            <Trigger Property="ItemsControl.AlternationIndex" Value="2">
+                                <Setter Property="StackPanel.Background" Value="LightGray"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
             </ItemsControl>
 
         </ScrollViewer>

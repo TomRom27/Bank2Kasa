@@ -75,11 +75,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\BooleanToVisibility.cs" />
+    <Compile Include="Converters\PolishDateConverter.cs" />
     <Compile Include="Service\OperationService.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\OperationListViewModel.cs" />
     <Compile Include="ViewModel\OperationVM.cs" />
-    <Compile Include="ViewModel\SupportedImport.cs" />
+    <Compile Include="ViewModel\Enums.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
