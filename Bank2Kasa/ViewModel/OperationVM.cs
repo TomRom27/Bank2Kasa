@@ -43,7 +43,7 @@ namespace Bank2Kasa.ViewModel
         private void CreateCommands()
         {
             ToggleAction = new RelayCommand(ToggleCurrentAction);
-            StartEdit = new RelayCommand(() =>  Edit(true));
+            StartEdit = new RelayCommand(() => Edit(true));
             EndEdit = new RelayCommand(() => Edit(false));
         }
 
@@ -196,6 +196,19 @@ namespace Bank2Kasa.ViewModel
                     ((ImportedOperation)operation).FullDescription = value;
                     RaisePropertyChanged(nameof(FullDescription));
                 }
+            }
+        }
+
+        public decimal Amount
+        {
+            get
+            {
+                return operation.Amount;
+            }
+            set
+            {
+                operation.Amount = value;
+                RaisePropertyChanged(nameof(Amount));
             }
         }
     }
