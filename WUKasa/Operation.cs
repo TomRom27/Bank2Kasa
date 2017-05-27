@@ -39,7 +39,7 @@ namespace WUKasa
             return String.Format(AccountTemplate, code, trashold);
         }
         #region properties
-        public bool IsCardOperation { get; set; }
+        public bool IsIncome { get; set; }
 
         public bool isDeleted
         {

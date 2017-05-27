@@ -199,6 +199,20 @@ namespace Bank2Kasa.ViewModel
             }
         }
 
+
+        public bool IsIncome
+        {
+            get
+            {
+                return operation.IsIncome;
+            }
+            set
+            {
+                operation.IsIncome = value;
+                RaisePropertyChanged(nameof(IsIncome));
+            }
+        }
+
         public decimal Amount
         {
             get
@@ -209,6 +223,42 @@ namespace Bank2Kasa.ViewModel
             {
                 operation.Amount = value;
                 RaisePropertyChanged(nameof(Amount));
+                if (IsIncome)
+                {
+                    MoneyIn = value;
+                    RaisePropertyChanged(nameof(MoneyIn));
+                }
+                else
+                {
+                    MoneyOut = value;
+                    RaisePropertyChanged(nameof(MoneyOut));
+                }
+            }
+        }
+
+        public decimal MoneyIn
+        {
+            get
+            {
+                return operation.MoneyIn;
+            }
+            set
+            {
+                operation.MoneyIn = value;
+                RaisePropertyChanged(nameof(MoneyIn));
+            }
+        }
+
+        public decimal MoneyOut
+        {
+            get
+            {
+                return operation.MoneyOut;
+            }
+            set
+            {
+                operation.MoneyOut = value;
+                RaisePropertyChanged(nameof(MoneyOut));
             }
         }
     }

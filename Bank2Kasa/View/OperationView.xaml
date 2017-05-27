@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Bank2Kasa.View"
              xmlns:vm="clr-namespace:Bank2Kasa.ViewModel"
              xmlns:cnv="clr-namespace:Bank2Kasa.Converters"
-             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="150"
+             mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="150"
              d:DataContext="{d:DesignInstance Type=vm:OperationVM, IsDesignTimeCreatable=True}" 
              >
     <UserControl.Resources>
@@ -22,7 +22,9 @@
             </Button>
             <Button DockPanel.Dock="Right" Margin="5,0,5,0" Width="50" Content="Edycja" Height="50" Command="{Binding StartEdit}" Visibility="{Binding IsNotEditMode, Converter={StaticResource VisConverter}}"/>
             <Button DockPanel.Dock="Right" Margin="5,0,5,0" Width="50" Content="Zakończ" Height="50" Command="{Binding EndEdit}" Visibility="{Binding IsEditMode, Converter={StaticResource VisConverter}}"/>
-            <TextBox DockPanel.Dock="Right" Margin="5,3,5,0" Width="100" Height="25" Text="{Binding Amount, StringFormat=F2 }" FontSize="14" FontWeight="Bold" IsEnabled="{Binding IsEditMode}" TextAlignment="Right"/>
+            <TextBox DockPanel.Dock="Right" Margin="5,3,5,0" Width="100" Height="25" Text="{Binding Amount, StringFormat=F2 }" FontSize="14" FontWeight="Bold" IsEnabled="True" TextAlignment="Right" Visibility="{Binding IsEditMode, Converter={StaticResource VisConverter}}"/>
+            <TextBox DockPanel.Dock="Right" Margin="5,3,5,0" Width="100" Height="25" Text="{Binding MoneyOut, StringFormat=F2 }" FontSize="14" FontWeight="Bold" IsEnabled="False" TextAlignment="Right" Visibility="{Binding IsNotEditMode, Converter={StaticResource VisConverter}}"/>
+            <TextBox DockPanel.Dock="Right" Margin="5,3,5,0" Width="100" Height="25" Text="{Binding MoneyIn, StringFormat=F2 }" FontSize="14" FontWeight="Bold" IsEnabled="False" TextAlignment="Right" Visibility="{Binding IsNotEditMode, Converter={StaticResource VisConverter}}"/>
             <StackPanel Margin="5,5,5,0" Orientation="Vertical" MinWidth="50" >
                 <StackPanel Orientation="Horizontal">
                     <TextBox Margin="0,0,0,0" Height="25" Text="{Binding OperationType}" MinWidth="30" FontSize="14" FontWeight="Bold" IsEnabled="{Binding IsEditMode}" />

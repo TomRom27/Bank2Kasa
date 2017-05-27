@@ -6,6 +6,6 @@
         xmlns:local="clr-namespace:Bank2Kasa"
         xmlns:views="clr-namespace:Bank2Kasa.View"
         mc:Ignorable="d"
-        Title="WUKasa Bank Importer" Height="350" Width="525">
+        Title="WUKasa Bank Importer" Height="560" Width="875">
     <views:MainView  Grid.Column="0"/>
 </Window>

@@ -21,7 +21,7 @@ namespace WUHelper
 
         public decimal Value
         {
-            get { return Convert.ToDecimal(wuInternal / Denominator);  }
+            get { return Convert.ToDecimal(wuInternal / (1.0*Denominator));  }
             set
             {
                 wuInternal = Convert.ToInt64(value * Denominator);

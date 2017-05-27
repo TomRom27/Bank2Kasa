@@ -89,12 +89,14 @@ namespace mBankData
                 opr.OperationType = Operation.OperationOutGeneral;
                 opr.Amount = -1 * mBOperation.Ammount;
                 opr.MoneyOut = opr.Amount;
+                opr.IsIncome = false;
             }
             else
             {
                 opr.OperationType = Operation.OperationInGeneral;
                 opr.Amount = mBOperation.Ammount;
                 opr.MoneyIn = opr.Amount;
+                opr.IsIncome = true;
             }
             opr.Account = Operation.FormAccount(opr.OperationType, trashold);
 
