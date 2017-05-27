@@ -23,11 +23,12 @@ namespace Bank2Kasa.ViewModel
 
             //if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
             //{
-                Operations.Add(new OperationVM(new WUKasa.Operation() { Amount = 100, Description = "Operacja przychodowa", Date = DateTime.Today }));
+            Operations.Add(new OperationVM(new WUKasa.Operation() { Amount = 100, Description = "Operacja przychodowa", Date = DateTime.Today }));
 
             //}
 
             CreateCommands();
+            LoadSettings();
         }
 
         [GalaSoft.MvvmLight.Ioc.PreferredConstructor]
@@ -38,7 +39,6 @@ namespace Bank2Kasa.ViewModel
         }
 
         ObservableCollection<OperationVM> _Operations;
-
         public ObservableCollection<OperationVM> Operations
         {
             get { return _Operations; }
@@ -46,6 +46,17 @@ namespace Bank2Kasa.ViewModel
             {
                 _Operations = value;
                 RaisePropertyChanged(nameof(Operations));
+            }
+        }
+
+        private OperationListSettings _Settings;
+        public OperationListSettings Settings
+        {
+            get { return _Settings; }
+            set
+            {
+                _Settings = value;
+                RaisePropertyChanged(nameof(Settings));
             }
         }
 
@@ -65,15 +76,28 @@ namespace Bank2Kasa.ViewModel
 
         }
 
+        private void LoadSettings()
+        {
+
+        }
+
+        private void SaveSettings()
+        {
+            // todo
+        }
+
         private void ImportData()
         {
             // todo
             Operations = operationService.ImportFromFile(SupportedImport.mBankCsv, "mbank.csv", "1");
+
+            SaveSettings();
         }
 
         private void SaveData()
         {
-
+            // todo
+            SaveSettings();
         }
         #endregion
     }
