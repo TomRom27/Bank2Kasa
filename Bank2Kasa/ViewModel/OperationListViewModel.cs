@@ -28,7 +28,6 @@ namespace Bank2Kasa.ViewModel
             //}
 
             CreateCommands();
-            LoadSettings();
         }
 
         [GalaSoft.MvvmLight.Ioc.PreferredConstructor]
@@ -36,6 +35,7 @@ namespace Bank2Kasa.ViewModel
         {
             this.operationService = oprService;
             this.dialogService = dialogService;
+            LoadSettings();
         }
 
         ObservableCollection<OperationVM> _Operations;
@@ -64,6 +64,8 @@ namespace Bank2Kasa.ViewModel
 
         public RelayCommand Save { get; set; }
         public RelayCommand Import { get; set; }
+        public RelayCommand SelectKasa { get; set; }
+        public RelayCommand SelectImport { get; set; }
 
         #endregion
 
@@ -73,17 +75,32 @@ namespace Bank2Kasa.ViewModel
         {
             Save = new RelayCommand(SaveData);
             Import = new RelayCommand(ImportData);
-
+            SelectKasa = new RelayCommand(SelectKasaFolder);
+            SelectImport = new RelayCommand(SelectImportFile);
         }
 
         private void LoadSettings()
         {
-
+            Settings = operationService.LoadSettings();
         }
 
         private void SaveSettings()
         {
-            // todo
+            operationService.SaveSettings(Settings);
+        }
+
+        private void SelectKasaFolder()
+        {
+            var newFolder = dialogService.SelectFolder("Wybierz katalog z plikiem Kasy", Settings.KasaFolder);
+            if (!String.IsNullOrEmpty(newFolder))
+                Settings.KasaFolder = newFolder;
+        }
+
+        private void SelectImportFile()
+        {
+            var newFile = dialogService.SelectFile("Wybierz plik do import", "*.*");
+            if (!String.IsNullOrEmpty(newFile))
+                Settings.ImportFile = newFile;
         }
 
         private void ImportData()

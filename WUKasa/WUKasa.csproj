@@ -45,7 +45,10 @@
     <Compile Include="Operation.cs" />
     <Compile Include="ImportedOperation.cs" />
     <Compile Include="OperationStore.cs" />
+    <Compile Include="OperationType.cs" />
+    <Compile Include="OperationTypeStore.cs" />
     <Compile Include="OprRecord.cs" />
+    <Compile Include="OprTypRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

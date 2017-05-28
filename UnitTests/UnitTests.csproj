@@ -80,6 +80,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="%24TYP.DAT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="mbank.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

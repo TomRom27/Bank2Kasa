@@ -59,5 +59,19 @@ namespace Bank2Kasa.ViewModel
                 return System.IO.Path.Combine(KasaFolder, String.Format(WUKasa.OperationStore.FileNameTemplate,Year));
             }
         }
+
+        private string _Trashold;
+        public string Trashold
+        {
+            get
+            {
+                return _Trashold;
+            }
+            set
+            {
+                _Trashold = value;
+                RaisePropertyChanged(nameof(Trashold));
+            }
+        }
     }
 }
