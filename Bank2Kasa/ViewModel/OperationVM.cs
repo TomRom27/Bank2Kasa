@@ -226,12 +226,10 @@ namespace Bank2Kasa.ViewModel
                 if (IsIncome)
                 {
                     MoneyIn = value;
-                    RaisePropertyChanged(nameof(MoneyIn));
                 }
                 else
                 {
                     MoneyOut = value;
-                    RaisePropertyChanged(nameof(MoneyOut));
                 }
             }
         }
