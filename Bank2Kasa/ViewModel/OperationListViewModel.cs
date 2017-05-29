@@ -105,8 +105,14 @@ namespace Bank2Kasa.ViewModel
 
         private void ImportData()
         {
-            // todo
-            Operations = operationService.ImportFromFile(SupportedImport.mBankCsv, "mbank.csv", "1");
+            try
+            {
+                Operations = operationService.ImportFromFile(SupportedImport.mBankCsv, Settings.ImportFile, Settings.Trashold);
+            }
+            catch (Exception ex)
+            {
+                dialogService.ShowError("Coś poszło źle:\n" + ex.Message, "Błąd", "OK", null);
+            }
 
             SaveSettings();
         }

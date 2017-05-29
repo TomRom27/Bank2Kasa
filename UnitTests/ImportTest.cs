@@ -13,10 +13,9 @@ namespace UnitTests
         public void CanImportMBankCsv()
         {
             // arrange
-            ImportConfiguration cfg = new ImportConfiguration();
 
             List<ImportedOperation> list = new List<ImportedOperation>();
-            var extractor = new CsvExportProvider(cfg);
+            var extractor = new CsvExportProvider();
 
             extractor.OperationImported += delegate (object sender, ImportedOperation args)
             {

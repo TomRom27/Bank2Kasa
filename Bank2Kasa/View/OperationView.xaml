@@ -14,7 +14,7 @@
         <cnv:BooleanToVisibility x:Key="VisConverter" />
     </UserControl.Resources>
     <StackPanel>
-        <DockPanel LastChildFill="True" Background="Beige" >
+        <DockPanel LastChildFill="True" >
             <TextBox DockPanel.Dock="Left" Margin="5,3,5,0" Height="25" Text="{Binding Date, Converter={StaticResource DateConverter}}" FontSize="14" FontWeight="Bold" IsEnabled="{Binding IsEditMode}"/>
 
             <Button DockPanel.Dock="Right" Margin="5,0,5,0" Width="100" Height="50" Command="{Binding ToggleAction}" >

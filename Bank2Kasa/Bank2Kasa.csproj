@@ -52,6 +52,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -78,6 +79,7 @@
     <Compile Include="Converters\BooleanToVisibility.cs" />
     <Compile Include="Converters\PolishDateConverter.cs" />
     <Compile Include="Service\OperationService.cs" />
+    <Compile Include="Service\SerializationHelper.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\OperationListViewModel.cs" />
     <Compile Include="ViewModel\OperationVM.cs" />
@@ -92,6 +94,9 @@
     </Compile>
     <Compile Include="View\OperationView.xaml.cs">
       <DependentUpon>OperationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\OperationView2.xaml.cs">
+      <DependentUpon>OperationView2.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -117,6 +122,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\OperationView2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -136,11 +145,14 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Data\%24TYP.DAT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\KSOPER.PAS" />
-    <None Include="Data\OPR2018.DAT" />
+    <None Include="Data\OPR2018.DAT">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Data\REINDEX.PAS" />
-    <None Include="Data\StDate.pas" />
-    <None Include="Data\tpdate.pas" />
     <None Include="mbank.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

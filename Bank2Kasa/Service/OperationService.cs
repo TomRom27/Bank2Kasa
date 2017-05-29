@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 using Bank2Kasa.ViewModel;
 using WUKasa;
+using WUKasa.Config;
 
 namespace Bank2Kasa.Service
 {
@@ -23,20 +25,22 @@ namespace Bank2Kasa.Service
     {
         public ObservableCollection<OperationVM> ImportFromFile(SupportedImport importType, string dataFilename, string trashold)
         {
+
+
             switch (importType)
             {
                 case SupportedImport.mBankCsv:
                     {
-                        return ImportFromMBankCsv(dataFilename, new ImportConfiguration() , trashold);
+                        return ImportFromMBankCsv(dataFilename, trashold);
                     }
                 default: return new ObservableCollection<OperationVM>();
             }
         }
 
-        private ObservableCollection<OperationVM> ImportFromMBankCsv(string dataFilename, ImportConfiguration cfg, string trashold)
+        private ObservableCollection<OperationVM> ImportFromMBankCsv(string dataFilename, string trashold)
         {
             ObservableCollection<OperationVM> list = new ObservableCollection<OperationVM>();
-            var importer = new mBankData.CsvExportProvider(cfg);
+            var importer = new mBankData.CsvExportProvider();
 
             importer.OperationImported += delegate (object sender, ImportedOperation args)
             {
@@ -55,17 +59,19 @@ namespace Bank2Kasa.Service
         public OperationListSettings LoadSettings()
         {
             if (!System.IO.File.Exists(SettingsFile))
+            {
+                System.Diagnostics.Trace.WriteLine("File settigns not found: " + SettingsFile);
                 return new OperationListSettings() { ImportFile = @"c:\desktop\my.import.txt", KasaFolder = @"c:\desktop", Trashold = "01", Year = 2017 };
-
+            }
 
             var content = System.IO.File.ReadAllLines(SettingsFile);
             try
             {
-                // todo
-                return new OperationListSettings();
+                return SerializationHelper.Deserialize<OperationListSettings>(content.Aggregate((i,j) => (i+j)));
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Trace.WriteLine("Failed to read settings from " + SettingsFile + "\n" + ex.Message);
                 return new OperationListSettings();
             }
 
@@ -74,7 +80,16 @@ namespace Bank2Kasa.Service
         public void SaveSettings(OperationListSettings settings)
         {
             var s = SettingsFile;
-            // todo
+
+            var content = SerializationHelper.Serialize(settings);
+            try
+            {
+                System.IO.File.WriteAllLines(SettingsFile, new string[] { content });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.WriteLine("Failed to save settings to "+SettingsFile+"\n"+ex.Message);
+            }
         }
 
         private string SettingsFile

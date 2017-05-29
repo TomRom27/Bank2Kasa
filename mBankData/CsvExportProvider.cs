@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 
 using WUKasa;
+using WUKasa.Config;
 
 namespace mBankData
 {
     public class CsvExportProvider
     {
         public event EventHandler<ImportedOperation> OperationImported;
-        private ImportConfiguration cfg;
 
-        public CsvExportProvider(ImportConfiguration cfg)
+        public CsvExportProvider()
         {
-            this.cfg = cfg;
         }
         public void Import(string filename, string trashold)
         {
+            ImportConfigurationSection importConfig = GetImportConfiguration();
+
             int lineNo = 0;
             using (var file = new StreamReader(filename, Encoding.GetEncoding(1250)))
             {
@@ -157,6 +159,19 @@ namespace mBankData
                 return s;
 
             return s.Substring(0, 1).ToUpper() + s.Substring(1).ToLower();
+        }
+
+        private ImportConfigurationSection GetImportConfiguration()
+        {
+            try
+            {
+           
+                return ConfigurationManager.GetSection("ImportConfigurationSection") as ImportConfigurationSection;
+            }
+            catch
+            {
+                return new ImportConfigurationSection();
+            }
         }
 
     }
