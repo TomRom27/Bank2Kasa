@@ -16,6 +16,16 @@ namespace UnitTests
 [TestClass]
 public class UnitTest1
 {
+    [TestMethod]
+    public void WULatinStringTest()
+    {
+        string s = "żółwia";
+        byte[] bytes = new byte[s.Length+1];
+        WULatinStringHelper.SetStringToBytes(s, ref bytes);
+        string s2 = WULatinStringHelper.GetStringFromBytes(bytes);
+
+        Assert.AreEqual(s, s2);
+    }
 
     [TestMethod]
     public void WUForsaTest()

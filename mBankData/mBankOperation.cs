@@ -14,7 +14,7 @@ namespace mBankData
         public string Title { get; set; }
         public string SenderReceiver { get; set; }
         public string AccountNumber { get; set; }
-        public decimal Ammount { get; set; }
+        public decimal Amount { get; set; }
         public decimal Balance { get; set; }
     }
 }

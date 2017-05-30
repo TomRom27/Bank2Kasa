@@ -26,8 +26,6 @@ namespace Bank2Kasa.ViewModel
         public OperationVM(Operation operation) : this()
         {
             this.operation = operation;
-
-            Action = ActionToDo.Add2KasaAndRemoveFromImport;
         }
 
         #region Commands
@@ -86,13 +84,19 @@ namespace Bank2Kasa.ViewModel
         {
             get
             {
-                return action;
+                if (operation is ImportedOperation)
+                    return ((ImportedOperation)operation).Action;
+                else
+                    return (ActionToDo)100; // vaue which for sure is above the upper bound of the enum
             }
             set
             {
-                action = value;
-                RaisePropertyChanged(nameof(Action));
-                RaisePropertyChanged(nameof(ActionString));
+                if (operation is ImportedOperation)
+                {
+                    ((ImportedOperation)operation).Action = value;
+                    RaisePropertyChanged(nameof(Action));
+                    RaisePropertyChanged(nameof(ActionString));
+                }
             }
         }
 

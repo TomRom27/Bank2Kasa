@@ -4,7 +4,7 @@ using System.Configuration;
 using System.IO;
 using System.Globalization;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 using WUKasa;
 using WUKasa.Config;
@@ -13,15 +13,21 @@ namespace mBankData
 {
     public class CsvExportProvider
     {
+        public string MonthToken = "{Mc}";
+        public string YearToken = "{Yr}";
+        public string BankDescriptionToken = "{BankDescription}";
+
+
         public event EventHandler<ImportedOperation> OperationImported;
+
+        private ImportConfigurationSection importConfig;
 
         public CsvExportProvider()
         {
+            importConfig = GetImportConfiguration();
         }
         public void Import(string filename, string trashold)
         {
-            ImportConfigurationSection importConfig = GetImportConfiguration();
-
             int lineNo = 0;
             using (var file = new StreamReader(filename, Encoding.GetEncoding(1250)))
             {
@@ -33,19 +39,66 @@ namespace mBankData
                     {
                         ImportedOperation importedOperation = TranslateMBankOperation(mBOperation, trashold);
                         if (importedOperation != null)
-                            RaiseOperationImported(importedOperation, lineNo);
+                        {
+                            importedOperation.OperationOrigin = new CsvExportOrigin(lineNo);
+
+                            // balancing operation in most cases must be added before the actual operation
+                            var balancingOperation = CreateBalancingOperation(importedOperation);
+                            if (balancingOperation != null)
+                            {
+                                if (balancingOperation.IsIncome)
+                                {
+                                    RaiseOperationImported(balancingOperation);
+                                    RaiseOperationImported(importedOperation);
+                                }
+                                else
+                                {
+                                    RaiseOperationImported(importedOperation);
+                                    RaiseOperationImported(balancingOperation);
+                                }
+                            }
+                            else
+                            {
+                                RaiseOperationImported(importedOperation);
+                            }
+                        }
                     }
                 }
             }
         }
 
+        private ImportedOperation CreateBalancingOperation(ImportedOperation operation)
+        {
+            if (operation.Action == ActionToDo.Add2KasaAndRemoveFromImport)
+            {
+                ImportedOperation balancingOperation = new ImportedOperation();
+                balancingOperation.Date = operation.Date;
+                balancingOperation.Amount = operation.Amount;
+                balancingOperation.IsIncome = !operation.IsIncome;
+                if (!operation.IsIncome)
+                {
+                    balancingOperation.OperationType = Operation.OperationInTransfer;
+                    balancingOperation.Description = "Płatność przelewem";
+                    balancingOperation.MoneyIn = operation.MoneyOut;
+                }
+                else
+                {
+                    balancingOperation.OperationType = Operation.OperationOutToBank;
+                    balancingOperation.Description = "Wpłata do banku";
+                    balancingOperation.MoneyOut = operation.MoneyIn;
+                }
+
+                return balancingOperation;
+            }
+            else
+                return null;
+        }
+
         #region Import private methods
-        private void RaiseOperationImported(ImportedOperation importedOperation, int lineNo)
+        private void RaiseOperationImported(ImportedOperation importedOperation)
         {
             if (this.OperationImported != null)
             {
-                importedOperation.OperationOrigin = new CsvExportOrigin(lineNo);
-
                 this.OperationImported(this, importedOperation);
             }
         }
@@ -53,6 +106,13 @@ namespace mBankData
         private ImportedOperation TranslateMBankOperation(mBankOperation mBOperation, string trashold)
         {
             ImportedOperation impOperation = new ImportedOperation();
+
+            System.Diagnostics.Trace.WriteLine("Number of configuration import rules: " + importConfig.ImportRules.Count.ToString());
+            foreach (var configRule in importConfig.ImportRules)
+            {
+                if (TranslateByConfigRule((ImportRule)configRule, mBOperation, trashold, impOperation))
+                    return impOperation;
+            }
 
             switch (mBOperation.OperationDescription)
             {
@@ -74,6 +134,74 @@ namespace mBankData
             }
         }
 
+        private bool TranslateByConfigRule(ImportRule configRule, mBankOperation mBOperation, string trashold, ImportedOperation opr)
+        {
+            bool ruleMatches = true;
+
+            if (!String.IsNullOrEmpty(configRule.BankAccountRegEx))
+                ruleMatches = ruleMatches && RegMatches(configRule.BankAccountRegEx, mBOperation.AccountNumber);
+            if (!String.IsNullOrEmpty(configRule.BankDescriptionRegEx))
+                ruleMatches = ruleMatches && RegMatches(configRule.BankDescriptionRegEx, mBOperation.OperationDescription);
+            if (!String.IsNullOrEmpty(configRule.BankTitleRegEx))
+                ruleMatches = ruleMatches && RegMatches(configRule.BankTitleRegEx, mBOperation.Title);
+            if (!String.IsNullOrEmpty(configRule.SenderReceiverRegEx))
+                ruleMatches = ruleMatches && RegMatches(configRule.SenderReceiverRegEx, mBOperation.SenderReceiver);
+            if (configRule.BankAmount.HasValue)
+                ruleMatches = ruleMatches && configRule.BankAmount.Value.Equals(mBOperation.Amount);
+
+            if (!ruleMatches)
+                return false;
+
+            if (configRule.ExtractDateFromTitle.HasValue && configRule.ExtractDateFromTitle.Value)
+                opr.Date = ExtractDateFromOperationTitle(mBOperation);
+            else
+                opr.Date = mBOperation.OperationDate;
+            opr.Name1 = S2Cammel(mBOperation.SenderReceiver);
+            if (opr.Name1.Length < mBOperation.SenderReceiver.Length)
+                opr.Name2 = mBOperation.SenderReceiver.Substring(opr.Name1.Length);
+
+            opr.BankOperationType = S2Cammel(mBOperation.OperationDescription);
+            opr.FullDescription = S2Cammel(mBOperation.Title);
+
+            opr.OperationType = configRule.OperationTyp;
+            opr.Description = ReplaceKnownToken(configRule.Description, mBOperation);
+            opr.IsIncome = configRule.IsIncome;
+
+            opr.Action = (ActionToDo)configRule.ActionCode;
+            if (opr.IsIncome)
+            {
+                opr.Amount = mBOperation.Amount;
+                opr.MoneyIn = opr.Amount;
+            }
+            else
+            {
+                opr.Amount = -1 * mBOperation.Amount;
+                opr.MoneyOut = opr.Amount;
+            }
+            opr.Account = Operation.FormAccount(opr.OperationType, trashold);
+
+
+            return true;
+        }
+
+        private DateTime ExtractDateFromOperationTitle(mBankOperation mBOperation)
+        {
+            const string x = "DATA TRANSAKCJI: ";
+            int pos = mBOperation.Title.LastIndexOf(x);
+            if (pos>=0)
+            {
+                try
+                {
+                    return DateTime.Parse(mBOperation.Title.Substring(pos+x.Length) , new CultureInfo(mBankConsts.FormatCulture));
+                }
+                catch
+                {
+
+                }
+            }
+            return mBOperation.AccountingDate;
+        }
+
         private ImportedOperation TranslateGeneralExpense(mBankOperation mBOperation, string trashold)
         {
             ImportedOperation opr = new ImportedOperation();
@@ -86,17 +214,17 @@ namespace mBankData
             opr.BankOperationType = S2Cammel(mBOperation.OperationDescription);
             opr.FullDescription = S2Cammel(mBOperation.Title);
 
-            if (mBOperation.Ammount < 0)
+            if (mBOperation.Amount < 0)
             {
                 opr.OperationType = Operation.OperationOutGeneral;
-                opr.Amount = -1 * mBOperation.Ammount;
+                opr.Amount = -1 * mBOperation.Amount;
                 opr.MoneyOut = opr.Amount;
                 opr.IsIncome = false;
             }
             else
             {
                 opr.OperationType = Operation.OperationInGeneral;
-                opr.Amount = mBOperation.Ammount;
+                opr.Amount = mBOperation.Amount;
                 opr.MoneyIn = opr.Amount;
                 opr.IsIncome = true;
             }
@@ -116,7 +244,7 @@ namespace mBankData
 
         private mBankOperation ParseCsvLine(string line)
         {
-            char[] obsoleteDelimiters = new char[] { '"' }; // todo - add single apostrophe here
+            char[] obsoleteDelimiters = new char[] { '"', '\'' };
 
             var mBankFormatProvider = new CultureInfo(mBankConsts.FormatCulture);
             line = line.Trim();
@@ -138,13 +266,27 @@ namespace mBankData
             opr.Title = items[3].TrimStart(obsoleteDelimiters).TrimEnd(obsoleteDelimiters);
             opr.SenderReceiver = items[4].TrimStart(obsoleteDelimiters).TrimEnd(obsoleteDelimiters);
             opr.AccountNumber = items[5].TrimStart(obsoleteDelimiters).TrimEnd(obsoleteDelimiters);
-            opr.Ammount = Decimal.Parse(items[6], mBankFormatProvider);
+            opr.Amount = Decimal.Parse(items[6], mBankFormatProvider);
             opr.Balance = Decimal.Parse(items[7], mBankFormatProvider);
 
             return opr;
             /*
 # Data operacji;#Data księgowania;#Opis operacji;#Tytuł;#Nadawca/Odbiorca;#Numer konta;#Kwota;#Saldo po operacji;
             */
+        }
+
+        private string ReplaceKnownToken(string input, mBankOperation mBankOpr)
+        {
+            input = input.Replace(MonthToken, mBankOpr.OperationDate.Month.ToString());
+            input = input.Replace(YearToken, mBankOpr.OperationDate.Year.ToString());
+            input = input.Replace(BankDescriptionToken, mBankOpr.OperationDescription);
+
+            return input;
+        }
+
+        private bool RegMatches(string pattern, string input)
+        {
+            return Regex.Match(input, pattern).Success;
         }
         #endregion
 
@@ -165,11 +307,12 @@ namespace mBankData
         {
             try
             {
-           
+
                 return ConfigurationManager.GetSection("ImportConfigurationSection") as ImportConfigurationSection;
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Trace.WriteLine("Failed to read ImportConfigurationSection: " + ex.Message);
                 return new ImportConfigurationSection();
             }
         }

@@ -14,6 +14,7 @@ namespace WUKasa
         #region
         public const string OperationOutGeneral = "00";
         public const string OperationOutHousehold = "04";
+        public const string OperationOutToBank = "26";
         public const string OperationOutHouseholdPrio = "34";
         public const string OperationInGeneral = "10";
         public const string OperationInTransfer = "15";

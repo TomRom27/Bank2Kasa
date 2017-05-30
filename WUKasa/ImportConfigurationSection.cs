@@ -9,25 +9,25 @@ namespace WUKasa.Config
 {
     public class ImportConfigurationSection : ConfigurationSection
     {
-        [ConfigurationProperty("ImportConfigurations", IsDefaultCollection = false)]
-        [ConfigurationCollection(typeof(ImportConfigCollection),
+        [ConfigurationProperty("ImportRules", IsDefaultCollection = false)]
+        [ConfigurationCollection(typeof(ImportRuleCollection),
             AddItemName = "add",
             ClearItemsName = "clear",
             RemoveItemName = "remove")]
-        public ImportConfigCollection ImportConfigurations
+        public ImportRuleCollection ImportRules
         {
             get
             {
-                return (ImportConfigCollection)base["ImportConfigurations"];
+                return (ImportRuleCollection)base["ImportRules"];
             }
         }
     }
 
-    public class ImportConfig : ConfigurationElement
+    public class ImportRule : ConfigurationElement
     {
-        public ImportConfig() { }
+        public ImportRule() { }
 
-        public ImportConfig(string name, string operationTyp, string description, bool isIncome)
+        public ImportRule(string name, string operationTyp, string description, bool isIncome)
         {
             Name = name;
             OperationTyp = operationTyp;
@@ -35,7 +35,7 @@ namespace WUKasa.Config
             IsIncome = isIncome;
         }
 
-        [ConfigurationProperty("ID", DefaultValue = "", IsRequired = true, IsKey = true)]
+        [ConfigurationProperty("Name", DefaultValue = "", IsRequired = true, IsKey = true)]
         public string Name
         {
             get { return (string)this["Name"]; }
@@ -91,24 +91,51 @@ namespace WUKasa.Config
             set { this["IsIncome"] = value; }
         }
 
-        [ConfigurationProperty("BankAmount", IsRequired = false, IsKey = false)]
-        public decimal BankAmount
+
+        [ConfigurationProperty("ActionCode", IsRequired = true, IsKey = false)]
+        public int ActionCode
         {
-            get { return (decimal)this["BankAmount"]; }
+            get { return (int)this["ActionCode"]; }
+            set { this["ActionCode"] = value; }
+        }
+
+        [ConfigurationProperty("BankAmount", IsRequired = false, IsKey = false)]
+        public decimal? BankAmount
+        {
+            get
+            {
+                if (this["BankAmount"] != null)
+                    return (decimal)this["BankAmount"];
+                else
+                    return null;
+            }
             set { this["BankAmount"] = value; }
+        }
+
+        [ConfigurationProperty("ExtractDateFromTitle", IsRequired = false, IsKey = false)]
+        public bool? ExtractDateFromTitle
+        {
+            get
+            {
+                if (this["ExtractDateFromTitle"] != null)
+                    return (bool)this["ExtractDateFromTitle"];
+                else
+                    return null;
+            }
+            set { this["ExtractDateFromTitle"] = value; }
         }
 
     }
 
-    public class ImportConfigCollection : ConfigurationElementCollection
+    public class ImportRuleCollection : ConfigurationElementCollection
     {
-        public ImportConfigCollection()
+        public ImportRuleCollection()
         {
         }
 
-        public ImportConfig this[int index]
+        public ImportRule this[int index]
         {
-            get { return (ImportConfig)BaseGet(index); }
+            get { return (ImportRule)BaseGet(index); }
             set
             {
                 if (BaseGet(index) != null)
@@ -119,7 +146,7 @@ namespace WUKasa.Config
             }
         }
 
-        public void Add(ImportConfig ImportConfig)
+        public void Add(ImportRule ImportConfig)
         {
             BaseAdd(ImportConfig);
         }
@@ -131,15 +158,15 @@ namespace WUKasa.Config
 
         protected override ConfigurationElement CreateNewElement()
         {
-            return new ImportConfig();
+            return new ImportRule();
         }
 
         protected override object GetElementKey(ConfigurationElement element)
         {
-            return ((ImportConfig)element).Name;
+            return ((ImportRule)element).Name;
         }
 
-        public void Remove(ImportConfig ImportConfig)
+        public void Remove(ImportRule ImportConfig)
         {
             BaseRemove(ImportConfig.Name);
         }

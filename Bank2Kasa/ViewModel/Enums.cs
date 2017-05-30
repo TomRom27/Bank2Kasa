@@ -11,16 +11,4 @@ namespace Bank2Kasa.ViewModel
         mBankCsv
     }
 
-    public enum ActionToDo
-    {
-        Add2KasaAndRemoveFromImport, RemoveFromImport, AnnotateInKasa
-    }
-
-    public static class ActionToDoExtension
-    {
-        public static ActionToDo Next(this ActionToDo a)
-        {
-            return (ActionToDo)((((int)a) + 1) % Enum.GetValues(typeof(ActionToDo)).Length);
-        }
-    }
 }
