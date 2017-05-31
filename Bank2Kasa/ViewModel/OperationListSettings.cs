@@ -31,9 +31,13 @@ namespace Bank2Kasa.ViewModel
             }
             set
             {
-                _KasaFolder = value;
-                RaisePropertyChanged(nameof(KasaFolder));
-                RaisePropertyChanged(nameof(KasaFile));
+                if ((_KasaFolder == null) || (!_KasaFolder.Equals(value)))
+                {
+                    _KasaFolder = value;
+                    RaisePropertyChanged(nameof(KasaFolder));
+                    RaisePropertyChanged(nameof(KasaFile));
+                    Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<Service.IOperationService>().SetKasaFolder(value);
+                }
             }
         }
 
@@ -56,7 +60,7 @@ namespace Bank2Kasa.ViewModel
         {
             get
             {
-                return System.IO.Path.Combine(KasaFolder, String.Format(WUKasa.OperationStore.FileNameTemplate,Year));
+                return System.IO.Path.Combine(KasaFolder, String.Format(WUKasa.OperationStore.FileNameTemplate, Year));
             }
         }
 

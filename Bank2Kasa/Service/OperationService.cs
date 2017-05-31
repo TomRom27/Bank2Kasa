@@ -19,10 +19,47 @@ namespace Bank2Kasa.Service
         ObservableCollection<OperationVM> ImportFromFile(SupportedImport importType, string filename, string trashold);
         OperationListSettings LoadSettings();
         void SaveSettings(OperationListSettings settings);
+        string GetOperationTypeName(string operationTypeCode);
+        void SetKasaFolder(string folder);
     }
 
     public class OperationService : IOperationService
     {
+        private List<WUKasa.OperationType> _OperationTypes = null;
+        private string _KasaFolder;
+
+        public void SetKasaFolder(string folder)
+        {
+            _KasaFolder = folder;
+        }
+
+        public string GetOperationTypeName(string operationTypeCode)
+        {
+            try
+            {
+                EnsureOperationTypes();
+                var operationType = _OperationTypes.Find((ot) => ot.OperationTypeCode.Equals(operationTypeCode));
+                if (operationType != null)
+                    return operationType.Description;
+                else
+                    return $"Nie znaleziono nazwy dla {operationTypeCode}";
+            }
+            catch (Exception ex)
+            {
+                return $"Problem z nazwą dla {operationTypeCode}: {ex.Message}";
+            }
+        }
+
+        private void EnsureOperationTypes()
+        {
+            if (_OperationTypes == null)
+            {
+                WUKasa.OperationTypeStore store = new OperationTypeStore(_KasaFolder);
+                _OperationTypes = store.GetAll();
+            }
+        }
+
+
         public ObservableCollection<OperationVM> ImportFromFile(SupportedImport importType, string dataFilename, string trashold)
         {
 
@@ -67,7 +104,7 @@ namespace Bank2Kasa.Service
             var content = System.IO.File.ReadAllLines(SettingsFile);
             try
             {
-                return SerializationHelper.Deserialize<OperationListSettings>(content.Aggregate((i,j) => (i+j)));
+                return SerializationHelper.Deserialize<OperationListSettings>(content.Aggregate((i, j) => (i + j)));
             }
             catch (Exception ex)
             {
@@ -88,13 +125,14 @@ namespace Bank2Kasa.Service
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Trace.WriteLine("Failed to save settings to "+SettingsFile+"\n"+ex.Message);
+                System.Diagnostics.Trace.WriteLine("Failed to save settings to " + SettingsFile + "\n" + ex.Message);
             }
         }
 
         private string SettingsFile
         {
-            get {
+            get
+            {
                 return System.Reflection.Assembly.GetEntryAssembly().Location + ".settings";
             }
         }

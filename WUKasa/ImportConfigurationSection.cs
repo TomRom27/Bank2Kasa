@@ -125,6 +125,20 @@ namespace WUKasa.Config
             set { this["ExtractDateFromTitle"] = value; }
         }
 
+
+        [ConfigurationProperty("CreateBalancingOperation", IsRequired = false, IsKey = false, DefaultValue = true)]
+        public bool? CreateBalancingOperation
+        {
+            get
+            {
+                if (this["CreateBalancingOperation"] != null)
+                    return (bool)this["CreateBalancingOperation"];
+                else
+                    return null;
+            }
+            set { this["CreateBalancingOperation"] = value; }
+        }
+
     }
 
     public class ImportRuleCollection : ConfigurationElementCollection

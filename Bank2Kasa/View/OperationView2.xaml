@@ -11,6 +11,8 @@
     <UserControl.Resources>
         <cnv:PolishDateConverter x:Key="DateConverter" />
         <cnv:BooleanToVisibility x:Key="VisConverter" />
+        <cnv:ActionToColorConverter x:Key="Act2ColConverter" />
+        
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -29,15 +31,16 @@
                 <TextBlock Margin="10,3,0,0" FontSize="15" Text="{Binding OperationTypeName}"/>
             </StackPanel>
             <TextBox Margin="0,5,0,0" Height="25" Text="{Binding Description}" FontSize="14" FontWeight="Bold" IsEnabled="{Binding IsEditMode}" />
-            <TextBlock Text="{Binding FullDescription}"/>
-            <TextBlock Text="{Binding BankOperationDescription}"/>
+
+            <TextBlock Grid.Row="0" Text="{Binding FullDescription}" MaxWidth="350" TextWrapping="WrapWithOverflow" />
+            <TextBlock Grid.Row="1" Text="{Binding BankOperationDescription}"/>
         </StackPanel>
         <TextBox Grid.Column="2" Grid.ColumnSpan="2" Margin="5,3,5,0" Width="100" Height="25" Text="{Binding Amount, StringFormat=F2 }" FontSize="14" FontWeight="Bold" IsEnabled="True" TextAlignment="Right" Visibility="{Binding IsEditMode, Converter={StaticResource VisConverter}}"/>
         <TextBox Grid.Column="2" Margin="5,3,5,0" Width="100" Height="25" Text="{Binding MoneyIn, StringFormat=F2 }" FontSize="14" FontWeight="Bold" IsEnabled="False" TextAlignment="Right" Visibility="{Binding IsNotEditMode, Converter={StaticResource VisConverter}}"/>
         <TextBox Grid.Column="3" Margin="5,3,5,0" Width="100" Height="25" Text="{Binding MoneyOut, StringFormat=F2 }" FontSize="14" FontWeight="Bold" IsEnabled="False" TextAlignment="Right" Visibility="{Binding IsNotEditMode, Converter={StaticResource VisConverter}}"/>
         <Button Grid.Column="4" Margin="5,0,5,0" Width="50" Content="Edycja" Height="50" Command="{Binding StartEdit}" Visibility="{Binding IsNotEditMode, Converter={StaticResource VisConverter}}"/>
         <Button Grid.Column="4" Margin="5,0,5,0" Width="50" Content="Zakończ" Height="50" Command="{Binding EndEdit}" Visibility="{Binding IsEditMode, Converter={StaticResource VisConverter}}"/>
-        <Button Grid.Column="5" Margin="5,0,5,0" Width="100" Height="50" Command="{Binding ToggleAction}" >
+        <Button Grid.Column="5" Margin="5,0,5,0" Width="100" Height="50" Command="{Binding ToggleAction}" Background="{Binding Action, Converter={StaticResource Act2ColConverter}}">
             <TextBlock Text="{Binding ActionString}" TextWrapping="WrapWithOverflow" />
         </Button>
     </Grid>

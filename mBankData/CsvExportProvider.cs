@@ -16,6 +16,7 @@ namespace mBankData
         public string MonthToken = "{Mc}";
         public string YearToken = "{Yr}";
         public string BankDescriptionToken = "{BankDescription}";
+        public string BankTitleToken = "{BankTitle}";
 
 
         public event EventHandler<ImportedOperation> OperationImported;
@@ -165,12 +166,12 @@ public static string CardFee = "OPŁATA ZA KARTĘ";
             opr.Action = (ActionToDo)configRule.ActionCode;
             if (opr.IsIncome)
             {
-                opr.Amount = mBOperation.Amount;
+                opr.Amount = Math.Abs(mBOperation.Amount);
                 opr.MoneyIn = opr.Amount;
             }
             else
             {
-                opr.Amount = -1 * mBOperation.Amount;
+                opr.Amount = Math.Abs(mBOperation.Amount);
                 opr.MoneyOut = opr.Amount;
             }
             opr.Account = Operation.FormAccount(opr.OperationType, trashold);
@@ -266,6 +267,7 @@ public static string CardFee = "OPŁATA ZA KARTĘ";
             input = input.Replace(MonthToken, mBankOpr.OperationDate.Month.ToString());
             input = input.Replace(YearToken, mBankOpr.OperationDate.Year.ToString());
             input = input.Replace(BankDescriptionToken, mBankOpr.OperationDescription);
+            input = input.Replace(BankTitleToken, mBankOpr.Title);
 
             return input;
         }

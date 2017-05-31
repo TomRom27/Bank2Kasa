@@ -19,7 +19,7 @@ namespace WUKasa
             btreeFile = new BTreeFile<OperationType>(System.IO.Path.Combine(path, FileName));
         }
 
-        public IList<OperationType> GetAll()
+        public List<OperationType> GetAll()
         {
             var list = new List<OperationType>();
 

@@ -6,13 +6,17 @@ using System.Threading.Tasks;
 
 using GalaSoft.MvvmLight.Command;
 
+using Microsoft.Practices.ServiceLocation;
+
 using WUKasa;
+using Bank2Kasa.Service;
 
 namespace Bank2Kasa.ViewModel
 {
     public class OperationVM : GalaSoft.MvvmLight.ViewModelBase
     {
         private Operation operation;
+        private IOperationService operationService;
 
         public OperationVM()
         {
@@ -20,6 +24,7 @@ namespace Bank2Kasa.ViewModel
             IsIgnore = false;
             IsEditMode = false;
             CreateCommands();
+            operationService = ServiceLocator.Current.GetInstance<IOperationService>();
         }
 
         [GalaSoft.MvvmLight.Ioc.PreferredConstructor]
@@ -147,7 +152,7 @@ namespace Bank2Kasa.ViewModel
         {
             get
             {
-                return "todo nazwa dla: " + operation.OperationType; // todo
+                return operationService.GetOperationTypeName( operation.OperationType);
             }
 
         }
