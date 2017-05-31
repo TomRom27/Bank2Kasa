@@ -9,7 +9,7 @@ using BTreeFileUtil;
 
 namespace WUKasa
 {
-    class OperationTypeStore
+    public class OperationTypeStore
     {
         public const string FileName = "$TYP.DAT";
         private BTreeFile<OperationType> btreeFile;
@@ -25,7 +25,7 @@ namespace WUKasa
 
             btreeFile.Open();
 
-            for (int i = 1; i <= btreeFile.TotalRecordNumber - 1; i++)
+            for (int i = 1; i <= btreeFile.TotalRecordNumber; i++)
             {
                 OperationType oprType = btreeFile.Get(i);
                 if (!oprType.isDeleted)

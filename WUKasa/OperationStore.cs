@@ -35,7 +35,7 @@ namespace WUKasa
             {
                 btreeFile.Open();
 
-                for (int i = 1; i <= btreeFile.TotalRecordNumber - 1; i++)
+                for (int i = 1; i <= btreeFile.TotalRecordNumber; i++)
                 {
                     Operation opr = btreeFile.Get(i);
                     if (!opr.isDeleted)

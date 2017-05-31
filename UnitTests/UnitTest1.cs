@@ -20,7 +20,7 @@ public class UnitTest1
     public void WULatinStringTest()
     {
         string s = "żółwia";
-        byte[] bytes = new byte[s.Length+1];
+        byte[] bytes = new byte[s.Length + 1];
         WULatinStringHelper.SetStringToBytes(s, ref bytes);
         string s2 = WULatinStringHelper.GetStringFromBytes(bytes);
 
@@ -127,5 +127,31 @@ public class UnitTest1
 
         store.Add(operation);
     }
-}
 
+    [TestMethod]
+    public void CanGetAllOperationTypes()
+    {
+        OperationTypeStore store = new OperationTypeStore("");
+
+        var list = store.GetAll();
+
+        Assert.AreEqual(38, list.Count);
+    }
+
+    [TestMethod]
+    public void OperationTypeStruct()
+    {
+        string filename = "$Typ.Dat";
+        byte[] recBytes = new byte[56];
+        OprTypRecord rec = new OprTypRecord();
+
+        using (var file = File.OpenRead(filename))
+        {
+            file.Seek(56, SeekOrigin.Begin);
+            file.Read(recBytes, 0, 56);
+        }
+
+        rec = StructHelper.BytesToStruct<OprTypRecord>(ref recBytes);
+        OperationType opt = new OperationType(recBytes);
+    }
+}

@@ -24,15 +24,18 @@ namespace WUKasa
         #endregion
 
         private OprRecord oprRecord;
+        private PolishConverter polishConverter;
 
         public Operation()
         {
             oprRecord = new OprRecord(1);
+            polishConverter = new MazoviaConverter();
         }
 
         public Operation(byte[] record)
         {
             oprRecord = StructHelper.BytesToStruct<OprRecord>(ref record);
+            polishConverter = new MazoviaConverter();
         }
 
         public static string FormAccount(string code, string trashold)
@@ -55,49 +58,49 @@ namespace WUKasa
 
         public string OperationType
         {
-            get { return WULatinStringHelper.GetStringFromBytes(oprRecord.TypArray); }
-            set { WULatinStringHelper.SetStringToBytes(value, ref oprRecord.TypArray); }
+            get { return polishConverter.GetStringFromBytes(oprRecord.TypArray); }
+            set { polishConverter.SetStringToBytes(value, ref oprRecord.TypArray); }
         }
 
         public string OperationCode
         {
-            get { return WULatinStringHelper.GetStringFromBytes(oprRecord.KodArray); }
-            set { WULatinStringHelper.SetStringToBytes(value, ref oprRecord.KodArray); }
+            get { return polishConverter.GetStringFromBytes(oprRecord.KodArray); }
+            set { polishConverter.SetStringToBytes(value, ref oprRecord.KodArray); }
         }
         public string Name1
         {
-            get { return WULatinStringHelper.GetStringFromBytes(oprRecord.Nazwa1Array); }
-            set { WULatinStringHelper.SetStringToBytes(value, ref oprRecord.Nazwa1Array); }
+            get { return polishConverter.GetStringFromBytes(oprRecord.Nazwa1Array); }
+            set { polishConverter.SetStringToBytes(value, ref oprRecord.Nazwa1Array); }
         }
 
         public string Name2
         {
-            get { return WULatinStringHelper.GetStringFromBytes(oprRecord.Nazwa2Array); }
-            set { WULatinStringHelper.SetStringToBytes(value, ref oprRecord.Nazwa2Array); }
+            get { return polishConverter.GetStringFromBytes(oprRecord.Nazwa2Array); }
+            set { polishConverter.SetStringToBytes(value, ref oprRecord.Nazwa2Array); }
         }
 
         public string City
         {
-            get { return WULatinStringHelper.GetStringFromBytes(oprRecord.MiastoArray); }
-            set { WULatinStringHelper.SetStringToBytes(value, ref oprRecord.MiastoArray); }
+            get { return polishConverter.GetStringFromBytes(oprRecord.MiastoArray); }
+            set { polishConverter.SetStringToBytes(value, ref oprRecord.MiastoArray); }
         }
 
         public string Street
         {
-            get { return WULatinStringHelper.GetStringFromBytes(oprRecord.UlicaArray); }
-            set { WULatinStringHelper.SetStringToBytes(value, ref oprRecord.UlicaArray); }
+            get { return polishConverter.GetStringFromBytes(oprRecord.UlicaArray); }
+            set { polishConverter.SetStringToBytes(value, ref oprRecord.UlicaArray); }
         }
 
         public string FinanceCode
         {
-            get { return WULatinStringHelper.GetStringFromBytes(oprRecord.RozrArray); }
-            set { WULatinStringHelper.SetStringToBytes(value, ref oprRecord.RozrArray); }
+            get { return polishConverter.GetStringFromBytes(oprRecord.RozrArray); }
+            set { polishConverter.SetStringToBytes(value, ref oprRecord.RozrArray); }
         }
 
         public string Description
         {
-            get { return WULatinStringHelper.GetStringFromBytes(oprRecord.OpisArray); }
-            set { WULatinStringHelper.SetStringToBytes(value, ref oprRecord.OpisArray); }
+            get { return polishConverter.GetStringFromBytes(oprRecord.OpisArray); }
+            set { polishConverter.SetStringToBytes(value, ref oprRecord.OpisArray); }
         }
 
         public decimal Amount
@@ -124,8 +127,8 @@ namespace WUKasa
 
         public string Account
         {
-            get { return WULatinStringHelper.GetStringFromBytes(oprRecord.KontoArray); }
-            set { WULatinStringHelper.SetStringToBytes(value, ref oprRecord.KontoArray); }
+            get { return polishConverter.GetStringFromBytes(oprRecord.KontoArray); }
+            set { polishConverter.SetStringToBytes(value, ref oprRecord.KontoArray); }
         }
 
         public int PrintNumber

@@ -114,24 +114,19 @@ namespace mBankData
                     return impOperation;
             }
 
-            switch (mBOperation.OperationDescription)
-            {
-                case (mBankConsts.TransferOut):
-                    {
-                        return TranslateTransferOut(mBOperation, trashold);
-                    }
-                default: return TranslateGeneralExpense(mBOperation, trashold);
-                    /*
-                             public static string InternalTransfer = "PRZELEW WEWNĘTRZNY WYCHODZĄCY";
-        public static string MTransfer = "PRZELEW MTRANSFER WYCHODZACY";
-        public static string TransferOut = "PRZELEW ZEWNĘTRZNY WYCHODZĄCY";
-        public static string TransferIn = "PRZELEW ZEWNĘTRZNY PRZYCHODZĄCY";
-        public static string TaxTransfer = "PRZELEW PRZYSZŁY PODATKOWY";
-        public static string Cardpay = "ZAKUP PRZY UŻYCIU KARTY";
-        public static string Cashout = "WYPŁATA W BANKOMACIE";
-        public static string CardFee = "OPŁATA ZA KARTĘ";   
-                     */
-            }
+            // process the rest, which is not covered by rules
+            return TranslateGeneralExpense(mBOperation, trashold);
+            /*
+public static string InternalTransfer = "PRZELEW WEWNĘTRZNY WYCHODZĄCY";
+public static string MTransfer = "PRZELEW MTRANSFER WYCHODZACY";
+public static string TransferOut = "PRZELEW ZEWNĘTRZNY WYCHODZĄCY";
+public static string TransferIn = "PRZELEW ZEWNĘTRZNY PRZYCHODZĄCY";
+public static string TaxTransfer = "PRZELEW PRZYSZŁY PODATKOWY";
+public static string Cardpay = "ZAKUP PRZY UŻYCIU KARTY";
+public static string Cashout = "WYPŁATA W BANKOMACIE";
+public static string CardFee = "OPŁATA ZA KARTĘ";   
+             */
+
         }
 
         private bool TranslateByConfigRule(ImportRule configRule, mBankOperation mBOperation, string trashold, ImportedOperation opr)
@@ -188,11 +183,11 @@ namespace mBankData
         {
             const string x = "DATA TRANSAKCJI: ";
             int pos = mBOperation.Title.LastIndexOf(x);
-            if (pos>=0)
+            if (pos >= 0)
             {
                 try
                 {
-                    return DateTime.Parse(mBOperation.Title.Substring(pos+x.Length) , new CultureInfo(mBankConsts.FormatCulture));
+                    return DateTime.Parse(mBOperation.Title.Substring(pos + x.Length), new CultureInfo(mBankConsts.FormatCulture));
                 }
                 catch
                 {
@@ -231,15 +226,6 @@ namespace mBankData
             opr.Account = Operation.FormAccount(opr.OperationType, trashold);
 
             return opr;
-        }
-
-        private ImportedOperation TranslateTransferOut(mBankOperation mBOperation, string trashold)
-        {
-            return TranslateGeneralExpense(mBOperation, trashold);
-
-            //ImportedOperation opr = new ImportedOperation();
-
-            //return opr;
         }
 
         private mBankOperation ParseCsvLine(string line)
