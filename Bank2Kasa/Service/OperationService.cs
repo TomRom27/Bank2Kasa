@@ -19,8 +19,9 @@ namespace Bank2Kasa.Service
         ObservableCollection<OperationVM> ImportFromFile(SupportedImport importType, string filename, string trashold);
         OperationListSettings LoadSettings();
         void SaveSettings(OperationListSettings settings);
-        string GetOperationTypeName(string operationTypeCode);
         void SetKasaFolder(string folder);
+        string GetOperationTypeName(string operationTypeCode);
+        bool GetOperationIncome(string operationTypeCode);
     }
 
     public class OperationService : IOperationService
@@ -49,6 +50,28 @@ namespace Bank2Kasa.Service
                 return $"Problem z nazwą dla {operationTypeCode}: {ex.Message}";
             }
         }
+
+        public bool GetOperationIncome(string operationTypeCode)
+        {
+            try
+            {
+                EnsureOperationTypes();
+                var operationType = _OperationTypes.Find((ot) => ot.OperationTypeCode.Equals(operationTypeCode));
+                if (operationType != null)
+                    return operationType.IsIncome;
+                else
+                {
+                    System.Diagnostics.Trace.WriteLine($"Nie znaleziono {operationTypeCode}");
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                return true;
+                System.Diagnostics.Trace.WriteLine($"Problem z {operationTypeCode}: {ex.Message}");
+            }
+        }
+
 
         private void EnsureOperationTypes()
         {

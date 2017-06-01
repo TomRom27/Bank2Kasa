@@ -142,9 +142,13 @@ namespace Bank2Kasa.ViewModel
             }
             set
             {
-                operation.OperationType = value;
-                RaisePropertyChanged(nameof(OperationType));
-                RaisePropertyChanged(nameof(OperationTypeName));
+                if (!operation.OperationType.Equals(value))
+                    {
+                    operation.OperationType = value;
+                    RaisePropertyChanged(nameof(OperationType));
+                    RaisePropertyChanged(nameof(OperationTypeName));
+                    IsIncome = operationService.GetOperationIncome(OperationType);
+                }
             }
         }
 
@@ -152,7 +156,7 @@ namespace Bank2Kasa.ViewModel
         {
             get
             {
-                return operationService.GetOperationTypeName( operation.OperationType);
+                return operationService.GetOperationTypeName(operation.OperationType);
             }
 
         }
@@ -219,6 +223,8 @@ namespace Bank2Kasa.ViewModel
             {
                 operation.IsIncome = value;
                 RaisePropertyChanged(nameof(IsIncome));
+                RaisePropertyChanged(nameof(AmountIn));
+                RaisePropertyChanged(nameof(AmountOut));
             }
         }
 
@@ -232,6 +238,8 @@ namespace Bank2Kasa.ViewModel
             {
                 operation.Amount = value;
                 RaisePropertyChanged(nameof(Amount));
+                RaisePropertyChanged(nameof(AmountIn));
+                RaisePropertyChanged(nameof(AmountOut));
                 if (IsIncome)
                 {
                     MoneyIn = value;
@@ -242,6 +250,29 @@ namespace Bank2Kasa.ViewModel
                 }
             }
         }
+
+        public decimal AmountIn
+        {
+            get
+            {
+                if (IsIncome)
+                    return Amount;
+                else
+                    return 0;
+            }
+        }
+
+        public decimal AmountOut
+        {
+            get
+            {
+                if (IsIncome)
+                    return 0;
+                else
+                    return Amount;
+            }
+        }
+
 
         public decimal MoneyIn
         {
