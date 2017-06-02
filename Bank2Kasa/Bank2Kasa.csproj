@@ -100,6 +100,9 @@
     <Compile Include="View\OperationView2.xaml.cs">
       <DependentUpon>OperationView2.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\OperationView3.xaml.cs">
+      <DependentUpon>OperationView3.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -127,6 +130,10 @@
     <Page Include="View\OperationView2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\OperationView3.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>

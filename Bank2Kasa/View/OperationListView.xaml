@@ -68,10 +68,8 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                 <HeaderedItemsControl  ItemsSource="{Binding Operations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" AlternationCount="2">
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="{x:Type local:OperationView}">
-                            <StackPanel >
-                                <local:OperationView2 Margin="2,2,-1,2" Background="Beige" />
-                            </StackPanel>
+                        <DataTemplate DataType="{x:Type local:OperationView3}">
+                            <local:OperationView3 Margin="2,2,-1,2" Background="Beige" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </HeaderedItemsControl>
