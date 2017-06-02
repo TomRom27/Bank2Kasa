@@ -60,6 +60,17 @@ namespace Bank2Kasa.ViewModel
             }
         }
 
+        private bool _IsImporting;
+        public bool IsImporting
+        {
+            get { return _IsImporting; }
+            set
+            {
+                _IsImporting = value;
+                RaisePropertyChanged(nameof(IsImporting));
+            }
+        }
+
         #region Commands
 
         public RelayCommand Save { get; set; }
@@ -103,18 +114,49 @@ namespace Bank2Kasa.ViewModel
                 Settings.ImportFile = newFile;
         }
 
+        //private void ImportData2()
+        //{
+        //    IsImporting = true;
+        //    try
+        //    {
+        //        Operations = operationService.ImportFromFile(SupportedImport.mBankCsv, Settings.ImportFile, Settings.Trashold);
+        //        IsImporting = false;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        IsImporting = false;
+        //        dialogService.ShowError("Coś poszło źle:\n" + ex.Message, "Błąd", "OK", null);
+        //    }
+
+        //    SaveSettings();
+        //    IsImporting = false;
+        //}
+
         private void ImportData()
         {
-            try
+            dialogService.SetBusy();
+            Task.Factory
+            /* in fact synchronously - as we use current sync context */
+            .StartNew(() =>
             {
+                IsImporting = true;
                 Operations = operationService.ImportFromFile(SupportedImport.mBankCsv, Settings.ImportFile, Settings.Trashold);
-            }
-            catch (Exception ex)
-            {
-                dialogService.ShowError("Coś poszło źle:\n" + ex.Message, "Błąd", "OK", null);
-            }
 
+            })
+            /* when completed, display response */
+            .ContinueWith((t) =>
+            {
+                IsImporting = false;
+                if (t.Exception != null)
+                {
+                    dialogService.ShowError("Coś poszło źle:\n" + t.Exception.Message, "Błąd", "OK", null);
+                }
+                else
+                {
+                }
+            });
             SaveSettings();
+            dialogService.SetNormal();
         }
 
         private void SaveData()

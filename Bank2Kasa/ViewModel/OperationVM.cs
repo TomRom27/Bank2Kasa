@@ -58,7 +58,7 @@ namespace Bank2Kasa.ViewModel
 
         private void Edit(bool start)
         {
-            IsEditMode = start;
+            IsEditMode = !IsEditMode;
         }
         #endregion
 

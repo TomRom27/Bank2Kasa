@@ -38,7 +38,7 @@
         </Style>
     </UserControl.Resources>
     <DockPanel LastChildFill="True">
-        <Border DockPanel.Dock="Top" >
+        <Border DockPanel.Dock="Top" Name="brdSettings">
             <Grid  Background="Beige">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="27"/>
@@ -76,6 +76,11 @@
 
             </ScrollViewer>
         </Border>
+        <Popup IsOpen="{Binding IsImporting}" PlacementTarget="{Binding ElementName=brdSettings}" PopupAnimation="Slide" Placement="Center">
+            <Border BorderBrush="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" BorderThickness="2" Background="LightGreen">
+                <TextBlock Margin="25,25,25,25" Text="Importuję dane. Czekaj ..." />
+            </Border>
+        </Popup>
     </DockPanel>
 
 </UserControl>
