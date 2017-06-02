@@ -10,6 +10,8 @@ using Microsoft.Practices.ServiceLocation;
 
 using WUKasa;
 using Bank2Kasa.Service;
+using Bank2Kasa.Service.Messages;
+
 
 namespace Bank2Kasa.ViewModel
 {
@@ -39,6 +41,8 @@ namespace Bank2Kasa.ViewModel
         public RelayCommand StartEdit { get; set; }
         public RelayCommand EndEdit { get; set; }
 
+        public RelayCommand DeleteSelf{ get; set; }
+
         #endregion
 
         #region private methods
@@ -48,8 +52,13 @@ namespace Bank2Kasa.ViewModel
             ToggleAction = new RelayCommand(ToggleCurrentAction);
             StartEdit = new RelayCommand(() => Edit(true));
             EndEdit = new RelayCommand(() => Edit(false));
+            DeleteSelf = new RelayCommand(Delete);
         }
 
+        private void Delete()
+        {
+            GalaSoft.MvvmLight.Messaging.Messenger.Default.Send<DeleteOperation>(new DeleteOperation(this));
+        }
 
         private void ToggleCurrentAction()
         {

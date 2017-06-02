@@ -28,7 +28,9 @@ namespace Bank2Kasa.ViewModel
             //}
 
             CreateCommands();
+            SubscribeToMessages();
         }
+
 
         [GalaSoft.MvvmLight.Ioc.PreferredConstructor]
         public OperationListViewModel(IOperationService oprService, IDialogService dialogService) : this()
@@ -77,6 +79,7 @@ namespace Bank2Kasa.ViewModel
         public RelayCommand Import { get; set; }
         public RelayCommand SelectKasa { get; set; }
         public RelayCommand SelectImport { get; set; }
+        //public RelayCommand DeleteOperation{ get; set; }
 
         #endregion
 
@@ -88,6 +91,12 @@ namespace Bank2Kasa.ViewModel
             Import = new RelayCommand(ImportData);
             SelectKasa = new RelayCommand(SelectKasaFolder);
             SelectImport = new RelayCommand(SelectImportFile);
+            //DeleteOperation = new RelayCommand(DeleteGivenOperation);
+        }
+
+        private void SubscribeToMessages()
+        {
+            GalaSoft.MvvmLight.Messaging.Messenger.Default.Register<Service.Messages.DeleteOperation>(this, DeleteGivenOperation);
         }
 
         private void LoadSettings()
@@ -163,6 +172,20 @@ namespace Bank2Kasa.ViewModel
         {
             // todo
             SaveSettings();
+        }
+
+        private void DeleteGivenOperation(Service.Messages.DeleteOperation message)
+        {
+            dialogService.ShowMessage("Usunąć operację " + message.Operation.Description + " ?", "Usuwanie operacji",
+                buttonConfirmText: "Tak", buttonCancelText: "Nie",
+                                            afterHideCallback: (confirmed) =>
+                                            {
+                                                if (confirmed && Operations.First((o) => o == message.Operation) != null)
+                                                {
+                                                    Operations.Remove(message.Operation);
+                                                }
+
+                                            });
         }
         #endregion
     }
