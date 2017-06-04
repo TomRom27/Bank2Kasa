@@ -99,7 +99,7 @@ namespace Bank2Kasa.Service
 
         private ObservableCollection<OperationVM> ImportFromMBankCsv(string dataFilename, string trashold)
         {
-            ObservableCollection<OperationVM> list = new ObservableCollection<OperationVM>();
+            List<OperationVM> list = new List<OperationVM>();
             var importer = new mBankData.CsvExportProvider();
 
             importer.OperationImported += delegate (object sender, ImportedOperation args)
@@ -108,7 +108,9 @@ namespace Bank2Kasa.Service
             };
 
             importer.Import(dataFilename, trashold);
-            return list;
+            list.Sort((o1,o2) => o1.Date.CompareTo(o2.Date) );
+
+            return new ObservableCollection<OperationVM>(list);
         }
 
         public void Save(List<OperationVM> list)

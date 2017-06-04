@@ -77,5 +77,19 @@ namespace Bank2Kasa.ViewModel
                 RaisePropertyChanged(nameof(Trashold));
             }
         }
+
+        private bool _AggregateDay;
+        public bool AggregateDay
+        {
+            get
+            {
+                return _AggregateDay;
+            }
+            set
+            {
+                _AggregateDay = value;
+                RaisePropertyChanged(nameof(AggregateDay));
+            }
+        }
     }
 }

@@ -162,7 +162,6 @@
     <None Include="Data\OPR2018.DAT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\REINDEX.PAS" />
     <None Include="mbank.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

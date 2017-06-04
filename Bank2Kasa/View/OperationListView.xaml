@@ -17,7 +17,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type HeaderedItemsControl}">
-                        <StackPanel Background="Bisque" >
+                        <StackPanel Background="#FFF1F1C9" >
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -59,11 +59,15 @@
                 <TextBox Grid.Column="2" Grid.Row="0" Margin ="5,5,5,0" Text="{Binding Settings.KasaFile, Mode=OneWay}" IsEnabled="False"/>
                 <Button Grid.Column="3" Grid.Row="0" Margin ="5,5,5,0" Content="..." Width="25" Command="{Binding SelectKasa}"/>
                 <Button Grid.Column="4" Grid.Row="0" Margin ="5,5,5,0" Content="Zapisz do Kasy" Width="100" Command="{Binding Save}"/>
-                <TextBox Grid.Column="5" Grid.Row="0" Margin ="5,5,5,0" Text="{Binding Settings.Trashold}" MinWidth="40"/>
+                <StackPanel Grid.Column="5" Grid.Row="0" Margin ="5,5,5,0" Orientation="Horizontal">
+                    <TextBox Text="{Binding Settings.Trashold}" MinWidth="20"/>
+                    <TextBlock Margin="5,0,0,0" Text="Kod do konta"/>
+                </StackPanel>
                 <TextBlock Grid.Column="1" Grid.Row="1" Margin ="5,5,5,0" Text="Plik importu"/>
                 <TextBox Grid.Column="2" Grid.Row="1" Margin ="5,5,5,0" Text="{Binding Settings.ImportFile, Mode=OneWay}" IsEnabled="False"/>
                 <Button Grid.Column="3" Grid.Row="1" Margin ="5,5,5,0" Content="..." Width="25" Command="{Binding SelectImport}"/>
                 <Button Grid.Column="4" Grid.Row="1" Margin ="5,5,5,0" Content="Import" Width="100" Command="{Binding Import}"/>
+                <CheckBox Grid.Column="5" Grid.Row="1" Margin ="5,5,5,0" Content="Komasuj z dnia" IsChecked="{Binding Settings.AggregateDay}"/>
             </Grid>
         </Border>
         <Popup IsOpen="{Binding IsImporting}" PlacementTarget="{Binding ElementName=brdSettings}" PopupAnimation="Slide" Placement="Center">
