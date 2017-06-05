@@ -30,12 +30,14 @@ namespace WUKasa
         {
             oprRecord = new OprRecord(1);
             polishConverter = new MazoviaConverter();
+            Max = GetMaxFromTime();
         }
 
         public Operation(byte[] record)
         {
             oprRecord = StructHelper.BytesToStruct<OprRecord>(ref record);
             polishConverter = new MazoviaConverter();
+            Max = GetMaxFromTime();
         }
 
         public static string FormAccount(string code, string trashold)
@@ -142,6 +144,11 @@ namespace WUKasa
             set { oprRecord.Max = value; }
         }
         #endregion
+
+        public static int GetMaxFromTime()
+        {
+            return ((DateTime.Now - new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day))).Milliseconds;
+        }
 
         #region IBTreeRecord interface
         public byte[] GetBytes()

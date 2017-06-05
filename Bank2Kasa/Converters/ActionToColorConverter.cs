@@ -23,6 +23,8 @@ namespace Bank2Kasa.Converters
                     return new SolidColorBrush(Color.FromRgb(240, 248, 255)); // very light blue
                 case ActionToDo.RemoveFromImport:
                     return new SolidColorBrush(Color.FromRgb(245, 205, 24)); // dark yellow
+                case ActionToDo.Add2Kasa:
+                    return new SolidColorBrush(Color.FromRgb(245, 255, 24)); // bright syellow
                 default:
                     return null;
             }

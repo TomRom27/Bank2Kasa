@@ -23,7 +23,6 @@ namespace Bank2Kasa.ViewModel
         public OperationVM()
         {
             this.operation = new Operation();
-            IsIgnore = false;
             IsEditMode = false;
             CreateCommands();
             operationService = ServiceLocator.Current.GetInstance<IOperationService>();
@@ -40,8 +39,8 @@ namespace Bank2Kasa.ViewModel
         public RelayCommand ToggleAction { get; set; }
         public RelayCommand StartEdit { get; set; }
         public RelayCommand EndEdit { get; set; }
-
-        public RelayCommand DeleteSelf{ get; set; }
+        public RelayCommand DeleteSelf { get; set; }
+        public RelayCommand CopySelf { get; set; }
 
         #endregion
 
@@ -53,11 +52,17 @@ namespace Bank2Kasa.ViewModel
             StartEdit = new RelayCommand(() => Edit(true));
             EndEdit = new RelayCommand(() => Edit(false));
             DeleteSelf = new RelayCommand(Delete);
+            CopySelf = new RelayCommand(Copy);
         }
 
         private void Delete()
         {
             GalaSoft.MvvmLight.Messaging.Messenger.Default.Send<DeleteOperation>(new DeleteOperation(this));
+        }
+
+        private void Copy()
+        {
+            GalaSoft.MvvmLight.Messaging.Messenger.Default.Send<CopyOperation>(new CopyOperation(this));
         }
 
         private void ToggleCurrentAction()
@@ -123,12 +128,11 @@ namespace Bank2Kasa.ViewModel
                     case ActionToDo.Add2KasaAndRemoveFromImport: return "Dodaj do Kasy, usuń z importu";
                     case ActionToDo.AnnotateInKasa: return "Oznacz istniejący w Kasie";
                     case ActionToDo.RemoveFromImport: return "Tylko usuń z importu";
+                    case ActionToDo.Add2Kasa: return "Dodaj do Kasy";
                     default: return "Nic nie rób";
                 }
             }
         }
-
-        public bool IsIgnore { get; set; }
 
         public DateTime Date
         {
@@ -152,7 +156,7 @@ namespace Bank2Kasa.ViewModel
             set
             {
                 if (!operation.OperationType.Equals(value))
-                    {
+                {
                     operation.OperationType = value;
                     RaisePropertyChanged(nameof(OperationType));
                     RaisePropertyChanged(nameof(OperationTypeName));
@@ -307,6 +311,35 @@ namespace Bank2Kasa.ViewModel
                 operation.MoneyOut = value;
                 RaisePropertyChanged(nameof(MoneyOut));
             }
+        }
+
+
+        public int Max
+        {
+            get { return operation.Max; }
+            set
+            {
+                operation.Max = value;
+                RaisePropertyChanged(nameof(Max));
+            }
+        }
+
+        public OperationVM Clone()
+        {
+            return new OperationVM()
+            {
+                Action = this.Action,
+                Amount = this.Amount,
+                BankOperationDescription = this.BankOperationDescription,
+                Date = this.Date,
+                Description = this.Description,
+                FullDescription = this.FullDescription,
+                IsEditMode = this.IsEditMode,
+                IsIncome = this.IsIncome,
+                MoneyIn = this.MoneyIn,
+                MoneyOut = this.MoneyOut,
+                OperationType = this.OperationType
+            };
         }
     }
 }

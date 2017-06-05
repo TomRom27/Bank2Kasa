@@ -85,6 +85,7 @@
                                 <local:OperationView3.ContextMenu>
                                     <ContextMenu >
                                         <MenuItem Header="Usuń" Command="{Binding DeleteSelf}"/>
+                                        <MenuItem Header="Kopiuj" Command="{Binding CopySelf}"/>
                                     </ContextMenu>
                                 </local:OperationView3.ContextMenu>
                             </local:OperationView3>

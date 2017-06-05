@@ -9,7 +9,7 @@ namespace WUKasa
 
     public enum ActionToDo
     {
-        Add2KasaAndRemoveFromImport = 0, RemoveFromImport = 1, AnnotateInKasa = 2
+        Add2KasaAndRemoveFromImport = 0, RemoveFromImport = 1, AnnotateInKasa = 2, Add2Kasa = 3
     }
 
     public static class ActionToDoExtension

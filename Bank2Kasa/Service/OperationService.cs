@@ -16,7 +16,7 @@ namespace Bank2Kasa.Service
     public interface IOperationService
     {
         void Save(List<OperationVM> list);
-        ObservableCollection<OperationVM> ImportFromFile(SupportedImport importType, string filename, string trashold);
+        ObservableCollection<OperationVM> ImportFromFile(SupportedImport importType, string filename, string trashold, bool aggregateDay);
         OperationListSettings LoadSettings();
         void SaveSettings(OperationListSettings settings);
         void SetKasaFolder(string folder);
@@ -83,7 +83,7 @@ namespace Bank2Kasa.Service
         }
 
 
-        public ObservableCollection<OperationVM> ImportFromFile(SupportedImport importType, string dataFilename, string trashold)
+        public ObservableCollection<OperationVM> ImportFromFile(SupportedImport importType, string dataFilename, string trashold, bool aggregateDay)
         {
 
 
@@ -91,31 +91,25 @@ namespace Bank2Kasa.Service
             {
                 case SupportedImport.mBankCsv:
                     {
-                        return ImportFromMBankCsv(dataFilename, trashold);
+                        return ImportFromMBankCsv(dataFilename, trashold, aggregateDay);
                     }
                 default: return new ObservableCollection<OperationVM>();
             }
         }
 
-        private ObservableCollection<OperationVM> ImportFromMBankCsv(string dataFilename, string trashold)
+        private ObservableCollection<OperationVM> ImportFromMBankCsv(string dataFilename, string trashold, bool aggregateDay)
         {
-            List<OperationVM> list = new List<OperationVM>();
+            List<ImportedOperation> list;
             var importer = new mBankData.CsvExportProvider();
 
-            importer.OperationImported += delegate (object sender, ImportedOperation args)
-            {
-                list.Add(new OperationVM(args));
-            };
-
-            importer.Import(dataFilename, trashold);
-            list.Sort((o1,o2) => o1.Date.CompareTo(o2.Date) );
-
-            return new ObservableCollection<OperationVM>(list);
+            list = importer.Import(dataFilename, trashold, aggregateDay);
+            
+            return new ObservableCollection<OperationVM>(list.Select(oi => new OperationVM(oi)).ToList());
         }
 
         public void Save(List<OperationVM> list)
         {
-
+            // todo
         }
 
         public OperationListSettings LoadSettings()

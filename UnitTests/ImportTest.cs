@@ -23,7 +23,7 @@ namespace UnitTests
             };
 
             // act
-            extractor.Import("mbank.csv","1");
+            extractor.Import("mbank.csv","1", true);
             // asset
             Assert.AreEqual(7, list.Count);
         }

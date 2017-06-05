@@ -79,7 +79,6 @@ namespace Bank2Kasa.ViewModel
         public RelayCommand Import { get; set; }
         public RelayCommand SelectKasa { get; set; }
         public RelayCommand SelectImport { get; set; }
-        //public RelayCommand DeleteOperation{ get; set; }
 
         #endregion
 
@@ -91,12 +90,12 @@ namespace Bank2Kasa.ViewModel
             Import = new RelayCommand(ImportData);
             SelectKasa = new RelayCommand(SelectKasaFolder);
             SelectImport = new RelayCommand(SelectImportFile);
-            //DeleteOperation = new RelayCommand(DeleteGivenOperation);
         }
 
         private void SubscribeToMessages()
         {
             GalaSoft.MvvmLight.Messaging.Messenger.Default.Register<Service.Messages.DeleteOperation>(this, DeleteGivenOperation);
+            GalaSoft.MvvmLight.Messaging.Messenger.Default.Register<Service.Messages.CopyOperation>(this, CopyGivenOperation);
         }
 
         private void LoadSettings()
@@ -149,7 +148,7 @@ namespace Bank2Kasa.ViewModel
             .StartNew(() =>
             {
                 IsImporting = true;
-                Operations = operationService.ImportFromFile(SupportedImport.mBankCsv, Settings.ImportFile, Settings.Trashold);
+                Operations = operationService.ImportFromFile(SupportedImport.mBankCsv, Settings.ImportFile, Settings.Trashold, Settings.AggregateDay);
 
             })
             /* when completed, display response */
@@ -186,6 +185,17 @@ namespace Bank2Kasa.ViewModel
                                                 }
 
                                             });
+        }
+
+        private void CopyGivenOperation(Service.Messages.CopyOperation message)
+        {
+            OperationVM newOperation = message.Operation.Clone();
+            var currentIndex = Operations.IndexOf(message.Operation);
+            if (currentIndex >= 0)
+            {
+                // the new operation must be added AFTER the one we copied 
+                Operations.Insert(currentIndex + 1, newOperation);
+            }
         }
         #endregion
     }

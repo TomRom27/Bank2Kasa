@@ -18,17 +18,17 @@ namespace mBankData
         public string BankDescriptionToken = "{BankDescription}";
         public string BankTitleToken = "{BankTitle}";
 
-
-        public event EventHandler<ImportedOperation> OperationImported;
-
         private ImportConfigurationSection importConfig;
 
         public CsvExportProvider()
         {
             importConfig = GetImportConfiguration();
         }
-        public void Import(string filename, string trashold)
+
+        public List<ImportedOperation> Import(string filename, string trashold, bool aggregateDay)
         {
+            List<ImportedOperation> list = new List<ImportedOperation>();
+
             int lineNo = 0;
             using (var file = new StreamReader(filename, Encoding.GetEncoding(1250)))
             {
@@ -49,60 +49,31 @@ namespace mBankData
                             {
                                 if (balancingOperation.IsIncome)
                                 {
-                                    RaiseOperationImported(balancingOperation);
-                                    RaiseOperationImported(importedOperation);
+                                    list.Add(balancingOperation);
+                                    list.Add(importedOperation);
                                 }
                                 else
                                 {
-                                    RaiseOperationImported(importedOperation);
-                                    RaiseOperationImported(balancingOperation);
+                                    list.Add(importedOperation);
+                                    list.Add(balancingOperation);
                                 }
                             }
                             else
                             {
-                                RaiseOperationImported(importedOperation);
+                                list.Add(importedOperation);
                             }
                         }
                     }
                 }
             }
-        }
+            if (aggregateDay)
+                AggregateDayIncomeOperations(list);
 
-        private ImportedOperation CreateBalancingOperation(ImportedOperation operation)
-        {
-            if (operation.Action == ActionToDo.Add2KasaAndRemoveFromImport)
-            {
-                ImportedOperation balancingOperation = new ImportedOperation();
-                balancingOperation.Date = operation.Date;
-                balancingOperation.Amount = operation.Amount;
-                balancingOperation.IsIncome = !operation.IsIncome;
-                if (!operation.IsIncome)
-                {
-                    balancingOperation.OperationType = Operation.OperationInTransfer;
-                    balancingOperation.Description = "Płatność przelewem";
-                    balancingOperation.MoneyIn = operation.MoneyOut;
-                }
-                else
-                {
-                    balancingOperation.OperationType = Operation.OperationOutToBank;
-                    balancingOperation.Description = "Wpłata do banku";
-                    balancingOperation.MoneyOut = operation.MoneyIn;
-                }
+            return list;
 
-                return balancingOperation;
-            }
-            else
-                return null;
         }
 
         #region Import private methods
-        private void RaiseOperationImported(ImportedOperation importedOperation)
-        {
-            if (this.OperationImported != null)
-            {
-                this.OperationImported(this, importedOperation);
-            }
-        }
 
         private ImportedOperation TranslateMBankOperation(mBankOperation mBOperation, string trashold)
         {
@@ -180,22 +151,32 @@ public static string CardFee = "OPŁATA ZA KARTĘ";
             return true;
         }
 
-        private DateTime ExtractDateFromOperationTitle(mBankOperation mBOperation)
+        private ImportedOperation CreateBalancingOperation(ImportedOperation operation)
         {
-            const string x = "DATA TRANSAKCJI: ";
-            int pos = mBOperation.Title.LastIndexOf(x);
-            if (pos >= 0)
+            if (operation.Action == ActionToDo.Add2KasaAndRemoveFromImport)
             {
-                try
+                ImportedOperation balancingOperation = new ImportedOperation();
+                balancingOperation.Action = ActionToDo.Add2Kasa;
+                balancingOperation.Date = operation.Date;
+                balancingOperation.Amount = operation.Amount;
+                balancingOperation.IsIncome = !operation.IsIncome;
+                if (!operation.IsIncome)
                 {
-                    return DateTime.Parse(mBOperation.Title.Substring(pos + x.Length), new CultureInfo(mBankConsts.FormatCulture));
+                    balancingOperation.OperationType = Operation.OperationInTransfer;
+                    balancingOperation.Description = "Płatność przelewem";
+                    balancingOperation.MoneyIn = operation.MoneyOut;
                 }
-                catch
+                else
                 {
+                    balancingOperation.OperationType = Operation.OperationOutToBank;
+                    balancingOperation.Description = "Wpłata do banku";
+                    balancingOperation.MoneyOut = operation.MoneyIn;
+                }
 
-                }
+                return balancingOperation;
             }
-            return mBOperation.AccountingDate;
+            else
+                return null;
         }
 
         private ImportedOperation TranslateGeneralExpense(mBankOperation mBOperation, string trashold)
@@ -227,6 +208,19 @@ public static string CardFee = "OPŁATA ZA KARTĘ";
             opr.Account = Operation.FormAccount(opr.OperationType, trashold);
 
             return opr;
+        }
+
+
+        private void AggregateDayIncomeOperations(List<ImportedOperation> list)
+        {
+            ImportedOperation opr; 
+            ImportedOperation daySumm = new ImportedOperation();
+
+            // first sort in the wnated order i.e. by date
+            list.Sort((o1, o2) => o1.Date.CompareTo(o2.Date) == 1 ? o1.Max.CompareTo(o2.Max) : o1.Date.CompareTo(o2.Date)); // by date and if equal - by Max
+
+
+
         }
 
         private mBankOperation ParseCsvLine(string line)
@@ -271,6 +265,25 @@ public static string CardFee = "OPŁATA ZA KARTĘ";
 
             return input;
         }
+
+        private DateTime ExtractDateFromOperationTitle(mBankOperation mBOperation)
+        {
+            const string x = "DATA TRANSAKCJI: ";
+            int pos = mBOperation.Title.LastIndexOf(x);
+            if (pos >= 0)
+            {
+                try
+                {
+                    return DateTime.Parse(mBOperation.Title.Substring(pos + x.Length), new CultureInfo(mBankConsts.FormatCulture));
+                }
+                catch
+                {
+
+                }
+            }
+            return mBOperation.AccountingDate;
+        }
+
 
         private bool RegMatches(string pattern, string input)
         {
