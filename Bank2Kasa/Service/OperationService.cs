@@ -85,7 +85,7 @@ namespace Bank2Kasa.Service
 
         public ObservableCollection<OperationVM> ImportFromFile(SupportedImport importType, string dataFilename, string trashold, bool aggregateDay)
         {
-            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Import z pliku "+dataFilename);
+            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Import z pliku " + dataFilename);
             switch (importType)
             {
                 case SupportedImport.mBankCsv:
@@ -109,15 +109,25 @@ namespace Bank2Kasa.Service
 
         public void Save(IList<OperationVM> list)
         {
+            decimal sAmount, sMoneyIn, sMoneyOut;
+            sAmount = sMoneyIn = sMoneyOut = 0;
             // todo
             System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Zapisuję dane do kasy");
             foreach (var o in list)
             {
+                if ((o.Action == ActionToDo.Add2Kasa) || (o.Action == ActionToDo.Add2KasaAndRemoveFromImport))
+                {
+                    sAmount = sAmount = Convert.ToInt16(o.IsIncome) * o.Amount + Convert.ToInt16(o.IsIncome) * -1 * o.Amount;
+                    sMoneyIn = sMoneyIn + o.MoneyIn;
+                    sMoneyOut = sMoneyOut + o.MoneyOut;
+                }
                 System.Diagnostics.Trace.WriteLine(o.Date.ToString("dd.MM.yyyy") + " " + o.OperationType + " " +
                                                 o.Description.PadRight(35) + " " + ((o.IsIncome) ? "+" : "-") + " " +
                                                 o.Amount.ToString().PadLeft(10) + " " + o.MoneyIn.ToString().PadLeft(10) + " " + o.MoneyOut.ToString().PadLeft(10) + " " +
-                                                o.ActionString.PadRight(32)+" "+o.Max.ToString().PadLeft(5));
+                                                o.ActionString.PadRight(32) + " " + o.Max.ToString().PadLeft(5));
             }
+            System.Diagnostics.Trace.WriteLine("W kasie zmiana".PadRight(51) + " " +
+                                sAmount.ToString().PadLeft(10) + " " + sMoneyIn.ToString().PadLeft(10) + " " + sMoneyOut.ToString().PadLeft(10));
             System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Zapis do kasy - koniec");
         }
 
