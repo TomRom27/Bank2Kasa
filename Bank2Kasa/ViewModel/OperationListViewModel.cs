@@ -169,7 +169,14 @@ namespace Bank2Kasa.ViewModel
 
         private void SaveData()
         {
-            // todo
+            try
+            {
+                operationService.Save(Operations);
+            }
+            catch (Exception ex)
+            {
+
+            }
             SaveSettings();
         }
 

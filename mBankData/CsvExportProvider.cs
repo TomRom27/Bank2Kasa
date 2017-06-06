@@ -67,7 +67,7 @@ namespace mBankData
                 }
             }
             if (aggregateDay)
-                AggregateDayIncomeOperations(list);
+                AggregateDayIncomeTransferOperations(list);
 
             return list;
 
@@ -211,16 +211,38 @@ public static string CardFee = "OPŁATA ZA KARTĘ";
         }
 
 
-        private void AggregateDayIncomeOperations(List<ImportedOperation> list)
+        private void AggregateDayIncomeTransferOperations(List<ImportedOperation> list)
         {
-            ImportedOperation opr; 
             ImportedOperation daySumm = new ImportedOperation();
+            List<ImportedOperation> toDelete = new List<ImportedOperation>();
 
             // first sort in the wnated order i.e. by date
             list.Sort((o1, o2) => o1.Date.CompareTo(o2.Date) == 1 ? o1.Max.CompareTo(o2.Max) : o1.Date.CompareTo(o2.Date)); // by date and if equal - by Max
 
+            foreach (var o in list)
+            {
+                if (o.OperationType.Equals(WUKasa.Operation.OperationInTransfer))
+                {
+                    if (CanAggregate(daySumm, o))
+                    {
+                        daySumm.Amount = daySumm.Amount + o.Amount;
+                        daySumm.MoneyIn = daySumm.MoneyIn + o.MoneyIn;
+                        daySumm.MoneyOut = daySumm.MoneyOut + o.MoneyOut;
+                        toDelete.Add(o);
+                    }
+                    else
+                    {
+                        daySumm = o;
+                    }
+                }
+            }
+            foreach (var d in toDelete)
+                list.Remove(d);
+        }
 
-
+        private bool CanAggregate(ImportedOperation aggr, ImportedOperation opr)
+        {
+            return aggr.Date.Equals(opr.Date) && aggr.Description.Equals(opr.Description);
         }
 
         private mBankOperation ParseCsvLine(string line)

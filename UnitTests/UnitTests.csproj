@@ -83,8 +83,11 @@
     <None Include="%24TYP.DAT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="App.config" />
-    <None Include="mbank.csv">
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="mbank.csv" />
+    <None Include="mbank2.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="multi.csv">

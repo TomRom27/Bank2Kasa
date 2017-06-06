@@ -154,4 +154,25 @@ public class UnitTest1
         rec = StructHelper.BytesToStruct<OprTypRecord>(ref recBytes);
         OperationType opt = new OperationType(recBytes);
     }
+
+    [TestMethod]
+    public void SortTest()
+    {
+        Operation o1, o2;
+        int i;
+
+        o1 = new Operation();
+        o2 = new Operation();
+
+        o1.Date = new DateTime(2017, 1, 1); o1.Max = 10;
+        o2.Date = new DateTime(2017, 1, 2); o2.Max = 5;
+        Assert.AreEqual(-1, CompOp(o1, o2));
+
+
+    }
+
+    private int CompOp(Operation o1, Operation o2)
+    {
+        return o1.Date.CompareTo(o2.Date) == 1 ? o1.Max.CompareTo(o2.Max) : o1.Date.CompareTo(o2.Date);
+    }
 }

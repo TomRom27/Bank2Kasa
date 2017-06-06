@@ -15,7 +15,7 @@ namespace Bank2Kasa.Service
 
     public interface IOperationService
     {
-        void Save(List<OperationVM> list);
+        void Save(IList<OperationVM> list);
         ObservableCollection<OperationVM> ImportFromFile(SupportedImport importType, string filename, string trashold, bool aggregateDay);
         OperationListSettings LoadSettings();
         void SaveSettings(OperationListSettings settings);
@@ -85,12 +85,12 @@ namespace Bank2Kasa.Service
 
         public ObservableCollection<OperationVM> ImportFromFile(SupportedImport importType, string dataFilename, string trashold, bool aggregateDay)
         {
-
-
+            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Import z pliku "+dataFilename);
             switch (importType)
             {
                 case SupportedImport.mBankCsv:
                     {
+                        System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Import z pliku - koniec");
                         return ImportFromMBankCsv(dataFilename, trashold, aggregateDay);
                     }
                 default: return new ObservableCollection<OperationVM>();
@@ -103,13 +103,22 @@ namespace Bank2Kasa.Service
             var importer = new mBankData.CsvExportProvider();
 
             list = importer.Import(dataFilename, trashold, aggregateDay);
-            
+
             return new ObservableCollection<OperationVM>(list.Select(oi => new OperationVM(oi)).ToList());
         }
 
-        public void Save(List<OperationVM> list)
+        public void Save(IList<OperationVM> list)
         {
             // todo
+            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Zapisuję dane do kasy");
+            foreach (var o in list)
+            {
+                System.Diagnostics.Trace.WriteLine(o.Date.ToString("dd.MM.yyyy") + " " + o.OperationType + " " +
+                                                o.Description.PadRight(35) + " " + ((o.IsIncome) ? "+" : "-") + " " +
+                                                o.Amount.ToString().PadLeft(10) + " " + o.MoneyIn.ToString().PadLeft(10) + " " + o.MoneyOut.ToString().PadLeft(10) + " " +
+                                                o.ActionString.PadRight(32)+" "+o.Max.ToString().PadLeft(5));
+            }
+            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Zapis do kasy - koniec");
         }
 
         public OperationListSettings LoadSettings()
