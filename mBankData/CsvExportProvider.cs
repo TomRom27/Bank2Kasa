@@ -27,8 +27,10 @@ namespace mBankData
 
         public List<ImportedOperation> Import(string filename, string trashold, bool aggregateDay)
         {
+            int currentMax = 1;
             List<ImportedOperation> list = new List<ImportedOperation>();
 
+            System.Diagnostics.Trace.WriteLine("Number of configuration import rules: " + importConfig.ImportRules.Count.ToString());
             int lineNo = 0;
             using (var file = new StreamReader(filename, Encoding.GetEncoding(1250)))
             {
@@ -50,17 +52,22 @@ namespace mBankData
                                 if (balancingOperation.IsIncome)
                                 {
                                     list.Add(balancingOperation);
+                                    balancingOperation.Max = currentMax++;
                                     list.Add(importedOperation);
+                                    importedOperation.Max = currentMax++;
                                 }
                                 else
                                 {
                                     list.Add(importedOperation);
+                                    importedOperation.Max = currentMax++;
                                     list.Add(balancingOperation);
+                                    balancingOperation.Max = currentMax++;
                                 }
                             }
                             else
                             {
                                 list.Add(importedOperation);
+                                importedOperation.Max = currentMax++;
                             }
                         }
                     }
@@ -79,7 +86,6 @@ namespace mBankData
         {
             ImportedOperation impOperation = new ImportedOperation();
 
-            System.Diagnostics.Trace.WriteLine("Number of configuration import rules: " + importConfig.ImportRules.Count.ToString());
             foreach (var configRule in importConfig.ImportRules)
             {
                 if (TranslateByConfigRule((ImportRule)configRule, mBOperation, trashold, impOperation))
@@ -217,7 +223,7 @@ public static string CardFee = "OPŁATA ZA KARTĘ";
             List<ImportedOperation> toDelete = new List<ImportedOperation>();
 
             // first sort in the wnated order i.e. by date
-            list.Sort((o1, o2) => o1.Date.CompareTo(o2.Date) == 1 ? o1.Max.CompareTo(o2.Max) : o1.Date.CompareTo(o2.Date)); // by date and if equal - by Max
+            list.Sort((o1, o2) => o1.Date.CompareTo(o2.Date) == 0 ? o1.Max.CompareTo(o2.Max) : o1.Date.CompareTo(o2.Date)); // by date and if equal - by Max            
 
             foreach (var o in list)
             {

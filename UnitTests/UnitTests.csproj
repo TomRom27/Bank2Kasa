@@ -93,6 +93,9 @@
     <None Include="multi.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="multi2.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="OPR2018.DAT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
