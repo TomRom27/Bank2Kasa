@@ -117,16 +117,7 @@ public class UnitTest1
     }
 
 
-    [TestMethod]
-    public void CanAdd1Operation()
-    {
-        int year = 2018;
 
-        OperationStore store = new OperationStore(year, "");
-        Operation operation = new Operation();
-
-        store.Add(operation);
-    }
 
     [TestMethod]
     public void CanGetAllOperationTypes()
@@ -156,23 +147,22 @@ public class UnitTest1
     }
 
     [TestMethod]
-    public void SortTest()
+    public void CanAddTwoOperations()
     {
-        Operation o1, o2;
-        int i;
-
-        o1 = new Operation();
-        o2 = new Operation();
-
-        o1.Date = new DateTime(2017, 1, 1); o1.Max = 10;
-        o2.Date = new DateTime(2017, 1, 2); o2.Max = 5;
-        Assert.AreEqual(-1, CompOp(o1, o2));
+        int year = 2018;
 
 
-    }
+        Operation op1 = new Operation() { Account = "500-010-4", Amount = 100, IsIncome = true, Date = new DateTime(2017, 6, 7), OperationType = "10", Description = "Przychód 100 dla żółwia", MoneyIn = 100, Max = 1 };
+        Operation op2 = new Operation() { Account = "500-010-4", Amount = 200, IsIncome = false, Date = new DateTime(2017, 6, 8), OperationType = "04", Description = "Rozchód 200 dla kogo chcesz", MoneyOut = 200, Max = 2 };
 
-    private int CompOp(Operation o1, Operation o2)
-    {
-        return o1.Date.CompareTo(o2.Date) == 1 ? o1.Max.CompareTo(o2.Max) : o1.Date.CompareTo(o2.Date);
+        OperationStore store = new OperationStore(year, "");
+        int count = store.Count;
+
+        // act
+        store.Add(op1);
+        store.Add(op2);
+
+        //assert
+        Assert.AreEqual(count + 2, store.Count);
     }
 }

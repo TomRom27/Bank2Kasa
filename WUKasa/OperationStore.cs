@@ -20,6 +20,12 @@ namespace WUKasa
             btreeFile = new BTreeFile<Operation>(System.IO.Path.Combine(path, String.Format(FileNameTemplate, year)));
         }
 
+        public int Count
+        {
+            get { return btreeFile.RecordsNumber; }
+        }
+
+
         public void Add(Operation operation)
         {
             EnsureMax();
@@ -33,8 +39,6 @@ namespace WUKasa
         {
             if (currentMax == 0)
             {
-                btreeFile.Open();
-
                 for (int i = 1; i <= btreeFile.TotalRecordNumber; i++)
                 {
                     Operation opr = btreeFile.Get(i);

@@ -115,12 +115,7 @@ namespace Bank2Kasa.Service
             System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Zapisuję dane do kasy");
             foreach (var o in list)
             {
-                if ((o.Action == ActionToDo.Add2Kasa) || (o.Action == ActionToDo.Add2KasaAndRemoveFromImport))
-                {
-                    sAmount = sAmount = Convert.ToInt16(o.IsIncome) * o.Amount + Convert.ToInt16(o.IsIncome) * -1 * o.Amount;
-                    sMoneyIn = sMoneyIn + o.MoneyIn;
-                    sMoneyOut = sMoneyOut + o.MoneyOut;
-                }
+                o.Add(ref sAmount, ref sMoneyIn, ref sMoneyOut);
                 System.Diagnostics.Trace.WriteLine(o.Date.ToString("dd.MM.yyyy") + " " + o.OperationType + " " +
                                                 o.Description.PadRight(35) + " " + ((o.IsIncome) ? "+" : "-") + " " +
                                                 o.Amount.ToString().PadLeft(10) + " " + o.MoneyIn.ToString().PadLeft(10) + " " + o.MoneyOut.ToString().PadLeft(10) + " " +

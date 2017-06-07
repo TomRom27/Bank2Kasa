@@ -23,8 +23,6 @@ namespace WUKasa
         {
             var list = new List<OperationType>();
 
-            btreeFile.Open();
-
             for (int i = 1; i <= btreeFile.TotalRecordNumber; i++)
             {
                 OperationType oprType = btreeFile.Get(i);

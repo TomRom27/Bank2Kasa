@@ -341,5 +341,15 @@ namespace Bank2Kasa.ViewModel
                 OperationType = this.OperationType
             };
         }
+
+        public void Add(ref decimal sAmount, ref decimal sMoneyIn, ref decimal sMoneyOut)
+        {
+            if ((this.Action == ActionToDo.Add2Kasa) || (this.Action == ActionToDo.Add2KasaAndRemoveFromImport))
+            {
+                sAmount = sAmount = Convert.ToInt16(this.IsIncome) * this.Amount + Convert.ToInt16(this.IsIncome) * -1 * this.Amount;
+                sMoneyIn = sMoneyIn + this.MoneyIn;
+                sMoneyOut = sMoneyOut + this.MoneyOut;
+            }
+        }
     }
 }

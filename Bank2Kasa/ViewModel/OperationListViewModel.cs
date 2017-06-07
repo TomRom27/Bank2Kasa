@@ -29,6 +29,7 @@ namespace Bank2Kasa.ViewModel
 
             CreateCommands();
             SubscribeToMessages();
+            Settings = new OperationListSettings();
         }
 
 
@@ -79,7 +80,7 @@ namespace Bank2Kasa.ViewModel
         public RelayCommand Import { get; set; }
         public RelayCommand SelectKasa { get; set; }
         public RelayCommand SelectImport { get; set; }
-
+        public RelayCommand ShowSum { get; set; }
         #endregion
 
         #region private methods
@@ -90,7 +91,10 @@ namespace Bank2Kasa.ViewModel
             Import = new RelayCommand(ImportData);
             SelectKasa = new RelayCommand(SelectKasaFolder);
             SelectImport = new RelayCommand(SelectImportFile);
+            ShowSum = new RelayCommand(ShowOperationSum);
         }
+
+
 
         private void SubscribeToMessages()
         {
@@ -122,6 +126,14 @@ namespace Bank2Kasa.ViewModel
                 Settings.ImportFile = newFile;
         }
 
+        private void ShowOperationSum()
+        {
+            decimal sAmount, sMoneyIn, sMoneyOut;
+            sAmount = sMoneyIn = sMoneyOut = 0;
+            // todo
+            foreach (var o in Operations)
+                o.Add(ref sAmount, ref sMoneyIn, ref sMoneyOut);
+        }
         //private void ImportData2()
         //{
         //    IsImporting = true;

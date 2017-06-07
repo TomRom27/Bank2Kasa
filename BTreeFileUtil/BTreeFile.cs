@@ -10,15 +10,19 @@ namespace BTreeFileUtil
 {
     public class BTreeFile<T> : IDisposable where T : IBTreeRecord, new()
     {
+        public const uint NoFreeTag = 0xFFFFFFFF;
         private string filename;
         private int dataSize;
         private byte[] dataBuffer;
         private FileStream dataFile;
         private BTreeFileHeader header;
+        private RecordHeader recHeader;
+        private byte[] recHeaderBuffer;
+        private int recHeaderSize;
         private bool isOpen;
         private bool disposed;
 
-        public BTreeFile(string filename )
+        public BTreeFile(string filename)
         {
             this.filename = filename;
             dataSize = new T().GetSize();
@@ -26,6 +30,8 @@ namespace BTreeFileUtil
             isOpen = false;
             disposed = false;
             header = new BTreeFileHeader();
+            recHeaderSize = 4; // todo 4 -> const
+            recHeaderBuffer = new byte[recHeaderSize];
         }
 
         public int TotalRecordNumber
@@ -33,20 +39,76 @@ namespace BTreeFileUtil
             get { return header.TotalRecordNumber; }
         }
 
-        public void Open()
+        public int RecordsNumber
+        {
+            get
+            {
+                if (!isOpen)
+                    Open();
+
+                return header.RecordsNumber;
+            }
+        }
+
+        public int DeletedRecordNumber
+        {
+            get { return header.DeletedRecordsNumber; }
+        }
+
+        private void Open()
         {
             dataFile = File.Open(filename, FileMode.Open, FileAccess.ReadWrite);
             ReadHeader();
             isOpen = true;
         }
 
-        public void Add(T o)
+        public void Add(T rec)
         {
+            if (!isOpen)
+                Open();
 
+            if (header.DeletedRecordsNumber > 0)
+                PutToDeleted(rec);
+            else
+                AddAsNew(rec);
+        }
+
+        private void AddAsNew(T o)
+        {
+            dataFile.Seek(header.RecordsNumber * dataSize, SeekOrigin.Begin);
+            PutAtCurrentPos(o);
+        }
+
+        private void PutToDeleted(T o)
+        {
+            if ((header.FirstFree <= 0) || (header.FirstFree == NoFreeTag))
+                throw new InvalidOperationException("Attempt to put to deleted while there is no deleted records in the file");
+
+            uint freePos = header.FirstFree;
+            // first we need to update the deleted structure 
+            dataFile.Seek(freePos * dataSize, SeekOrigin.Begin);
+            dataFile.Read(recHeaderBuffer, 0, recHeaderBuffer.Length);
+            recHeader = StructHelper.BytesToStruct<RecordHeader>(ref recHeaderBuffer);
+            header.FirstFree = recHeader.NextFree;
+            header.DeletedRecordsNumber--;
+
+            // now time to write actual data
+            dataFile.Seek(freePos * dataSize, SeekOrigin.Begin);
+            PutAtCurrentPos(o);
+        }
+
+        private void PutAtCurrentPos(T o)
+        {
+            dataFile.Write(o.GetBytes(), 0, dataSize);
+            header.RecordsNumber++;
+            WriteHeader();
         }
 
         public T Get(int recPos)
         {
+            if (!isOpen)
+                Open();
+
             if (recPos > header.TotalRecordNumber)
                 throw new ArgumentOutOfRangeException($"Expected record position {recPos} is bigger then allowed {header.TotalRecordNumber}");
 
@@ -71,7 +133,9 @@ namespace BTreeFileUtil
 
         private void WriteHeader()
         {
-            throw new NotImplementedException();
+            byte[] headerBytes = StructHelper.StructToBytes(header);
+            dataFile.Seek(0, SeekOrigin.Begin);
+            dataFile.Write(headerBytes, 0, headerBytes.Length);
         }
 
         private void ReadHeader()
@@ -99,7 +163,7 @@ namespace BTreeFileUtil
             {
                 if (disposing)
                 {
-                    // todo
+                    Close();
                 }
                 // Indicate that the instance has been disposed.
                 disposed = true;
@@ -111,7 +175,7 @@ namespace BTreeFileUtil
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct BTreeFileHeader
     {
-        public int FirstFree;
+        public uint FirstFree;
         public int DeletedRecordsNumber;
         public int RecordsNumber;
         public int RecordLength;
@@ -122,5 +186,11 @@ namespace BTreeFileUtil
         {
             get { return DeletedRecordsNumber + RecordsNumber; }
         }
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct RecordHeader
+    {
+        public uint NextFree;
     }
 }

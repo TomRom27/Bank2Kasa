@@ -8,6 +8,11 @@ namespace Bank2Kasa.ViewModel
 {
     public class OperationListSettings : GalaSoft.MvvmLight.ViewModelBase
     {
+        public OperationListSettings()
+        {
+            Year = 2017;
+        }
+
         private string _ImportFile;
         public string ImportFile
         {
