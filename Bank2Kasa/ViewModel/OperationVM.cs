@@ -76,6 +76,11 @@ namespace Bank2Kasa.ViewModel
         }
         #endregion
 
+        public Operation Operation
+        {
+            get { return operation; }
+        }
+
         private bool isEditMode;
         public bool IsEditMode
         {

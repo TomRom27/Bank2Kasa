@@ -15,7 +15,7 @@ namespace Bank2Kasa.Service
 
     public interface IOperationService
     {
-        void Save(IList<OperationVM> list);
+        void Save(string importFilename, int year, IList<OperationVM> list);
         ObservableCollection<OperationVM> ImportFromFile(SupportedImport importType, string filename, string trashold, bool aggregateDay);
         OperationListSettings LoadSettings();
         void SaveSettings(OperationListSettings settings);
@@ -67,8 +67,9 @@ namespace Bank2Kasa.Service
             }
             catch (Exception ex)
             {
-                return true;
                 System.Diagnostics.Trace.WriteLine($"Problem z {operationTypeCode}: {ex.Message}");
+                return true;
+
             }
         }
 
@@ -107,25 +108,7 @@ namespace Bank2Kasa.Service
             return new ObservableCollection<OperationVM>(list.Select(oi => new OperationVM(oi)).ToList());
         }
 
-        public void Save(IList<OperationVM> list)
-        {
-            decimal sAmount, sMoneyIn, sMoneyOut;
-            sAmount = sMoneyIn = sMoneyOut = 0;
-            // todo
-            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Zapisuję dane do kasy");
-            foreach (var o in list)
-            {
-                o.Add(ref sAmount, ref sMoneyIn, ref sMoneyOut);
-                System.Diagnostics.Trace.WriteLine(o.Date.ToString("dd.MM.yyyy") + " " + o.OperationType + " " +
-                                                o.Description.PadRight(35) + " " + ((o.IsIncome) ? "+" : "-") + " " +
-                                                o.Amount.ToString().PadLeft(10) + " " + o.MoneyIn.ToString().PadLeft(10) + " " + o.MoneyOut.ToString().PadLeft(10) + " " +
-                                                o.ActionString.PadRight(32) + " " + o.Max.ToString().PadLeft(5));
-            }
-            System.Diagnostics.Trace.WriteLine("W kasie zmiana".PadRight(51) + " " +
-                                sAmount.ToString().PadLeft(10) + " " + sMoneyIn.ToString().PadLeft(10) + " " + sMoneyOut.ToString().PadLeft(10));
-            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Zapis do kasy - koniec");
-        }
-
+        #region Settings related
         public OperationListSettings LoadSettings()
         {
             if (!System.IO.File.Exists(SettingsFile))
@@ -168,6 +151,51 @@ namespace Bank2Kasa.Service
             {
                 return System.Reflection.Assembly.GetEntryAssembly().Location + ".settings";
             }
+        }
+        #endregion Settings
+
+        public void Save(string importFilename, int year, IList<OperationVM> list)
+        {
+            WriteListDiagnostics(list);
+            UpdateKasa(year, list);
+            RewriteImportFile(importFilename, list);
+        }
+
+        private void RewriteImportFile(string filename, IList<OperationVM> list)
+        {
+            // todo
+        }
+
+        private void UpdateKasa(int year, IList<OperationVM> list)
+        {
+            // todo
+            // rename IX
+            // copy DAT
+            OperationStore store = new OperationStore(year, _KasaFolder);
+            foreach (var oprVM in list)
+            {
+                if ((oprVM.Action == ActionToDo.Add2Kasa) || (oprVM.Action == ActionToDo.Add2KasaAndRemoveFromImport))
+                        store.Add(oprVM.Operation);
+            }
+        }
+
+        private static void WriteListDiagnostics(IList<OperationVM> list)
+        {
+            decimal sAmount, sMoneyIn, sMoneyOut;
+            sAmount = sMoneyIn = sMoneyOut = 0;
+
+            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Zapisuję dane do kasy");
+            foreach (var o in list)
+            {
+                o.Add(ref sAmount, ref sMoneyIn, ref sMoneyOut);
+                System.Diagnostics.Trace.WriteLine(o.Date.ToString("dd.MM.yyyy") + " " + o.OperationType + " " +
+                                                o.Description.PadRight(35) + " " + ((o.IsIncome) ? "+" : "-") + " " +
+                                                o.Amount.ToString().PadLeft(10) + " " + o.MoneyIn.ToString().PadLeft(10) + " " + o.MoneyOut.ToString().PadLeft(10) + " " +
+                                                o.ActionString.PadRight(32) + " " + o.Max.ToString().PadLeft(5));
+            }
+            System.Diagnostics.Trace.WriteLine("W kasie zmiana".PadRight(51) + " " +
+                                sAmount.ToString().PadLeft(10) + " " + sMoneyIn.ToString().PadLeft(10) + " " + sMoneyOut.ToString().PadLeft(10));
+            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Zapis do kasy - koniec");
         }
     }
 }

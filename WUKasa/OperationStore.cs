@@ -11,6 +11,7 @@ namespace WUKasa
     public class OperationStore
     {
         public const string FileNameTemplate = "OPR{0}.DAT";
+        public const string IndexExt = "IX";
         private int currentMax;
         private BTreeFile<Operation> btreeFile;
 
@@ -23,6 +24,11 @@ namespace WUKasa
         public int Count
         {
             get { return btreeFile.RecordsNumber; }
+        }
+
+        public int CountWithDeleted
+        {
+            get { return btreeFile.TotalRecordNumber; }
         }
 
 

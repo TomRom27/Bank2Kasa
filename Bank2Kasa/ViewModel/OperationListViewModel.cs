@@ -183,11 +183,11 @@ namespace Bank2Kasa.ViewModel
         {
             try
             {
-                operationService.Save(Operations);
+                operationService.Save(Settings.ImportFile, Settings.Year, Operations);
             }
             catch (Exception ex)
             {
-
+                dialogService.ShowError("Coś poszło źle:\n" + ex.Message, "Błąd", "OK", null);
             }
             SaveSettings();
         }

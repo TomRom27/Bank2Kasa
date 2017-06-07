@@ -147,22 +147,25 @@ public class UnitTest1
     }
 
     [TestMethod]
-    public void CanAddTwoOperations()
+    public void CanThreeTwoOperations()
     {
         int year = 2018;
+        string path = @"C:\VirtualXP\Tomek\Dropbox\Kasa\TR";
 
+        Operation op1 = new Operation() { Account = "500-010-4", Amount = 100, IsIncome = true, Date = new DateTime(year, 6, 4), OperationType = "10", Description = "Przychód 100 dla żółwia", MoneyIn = 100, Max = 1 };
+        Operation op2 = new Operation() { Account = "500-010-4", Amount = 200, IsIncome = false, Date = new DateTime(year, 6, 5), OperationType = "04", Description = "Rozchód 200 dla kogo chcesz", MoneyOut = 200, Max = 2 };
+        Operation op3 = new Operation() { Account = "500-010-4", Amount = 230, IsIncome = false, Date = new DateTime(year, 6, 6), OperationType = "04", Description = "Rozchód 230 dla kogo chcesz", MoneyOut = 230, Max = 2 };
 
-        Operation op1 = new Operation() { Account = "500-010-4", Amount = 100, IsIncome = true, Date = new DateTime(2017, 6, 7), OperationType = "10", Description = "Przychód 100 dla żółwia", MoneyIn = 100, Max = 1 };
-        Operation op2 = new Operation() { Account = "500-010-4", Amount = 200, IsIncome = false, Date = new DateTime(2017, 6, 8), OperationType = "04", Description = "Rozchód 200 dla kogo chcesz", MoneyOut = 200, Max = 2 };
-
-        OperationStore store = new OperationStore(year, "");
+        OperationStore store = new OperationStore(year, path);
         int count = store.Count;
 
         // act
         store.Add(op1);
         store.Add(op2);
+        store.Add(op3);
 
         //assert
-        Assert.AreEqual(count + 2, store.Count);
+        long actualSize = new System.IO.FileInfo(System.IO.Path.Combine(path, $"OPR{year}.DAT")).Length;
+        Assert.AreEqual((store.CountWithDeleted+1)*240, actualSize);
     }
 }

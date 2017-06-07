@@ -120,7 +120,7 @@ namespace mBankData
                 opr.Date = mBOperation.OperationDate;
             opr.Name1 = S2Cammel(mBOperation.SenderReceiver);
             if (opr.Name1.Length < mBOperation.SenderReceiver.Length)
-                opr.Name2 = mBOperation.SenderReceiver.Substring(opr.Name1.Length);
+                opr.Name2 = S2Cammel(mBOperation.SenderReceiver.Substring(opr.Name1.Length));
 
             opr.BankOperationType = S2Cammel(mBOperation.OperationDescription);
             opr.FullDescription = S2Cammel(mBOperation.Title);

@@ -36,7 +36,13 @@ namespace BTreeFileUtil
 
         public int TotalRecordNumber
         {
-            get { return header.TotalRecordNumber; }
+            get
+            {
+                if (!isOpen)
+                    Open();
+
+                return header.TotalRecordsNumber;
+            }
         }
 
         public int RecordsNumber
@@ -48,11 +54,6 @@ namespace BTreeFileUtil
 
                 return header.RecordsNumber;
             }
-        }
-
-        public int DeletedRecordNumber
-        {
-            get { return header.DeletedRecordsNumber; }
         }
 
         private void Open()
@@ -75,7 +76,8 @@ namespace BTreeFileUtil
 
         private void AddAsNew(T o)
         {
-            dataFile.Seek(header.RecordsNumber * dataSize, SeekOrigin.Begin);
+            dataFile.Seek((header.RecordsNumber + 1) * dataSize, SeekOrigin.Begin);
+            header.TotalRecordsNumber++;
             PutAtCurrentPos(o);
         }
 
@@ -100,7 +102,6 @@ namespace BTreeFileUtil
         private void PutAtCurrentPos(T o)
         {
             dataFile.Write(o.GetBytes(), 0, dataSize);
-            header.RecordsNumber++;
             WriteHeader();
         }
 
@@ -109,8 +110,8 @@ namespace BTreeFileUtil
             if (!isOpen)
                 Open();
 
-            if (recPos > header.TotalRecordNumber)
-                throw new ArgumentOutOfRangeException($"Expected record position {recPos} is bigger then allowed {header.TotalRecordNumber}");
+            if (recPos > header.TotalRecordsNumber)
+                throw new ArgumentOutOfRangeException($"Expected record position {recPos} is bigger then allowed {header.RecordsNumber}");
 
             dataFile.Seek(recPos * dataSize, SeekOrigin.Begin);
             dataFile.Read(dataBuffer, 0, dataSize);
@@ -177,14 +178,14 @@ namespace BTreeFileUtil
     {
         public uint FirstFree;
         public int DeletedRecordsNumber;
-        public int RecordsNumber;
+        public int TotalRecordsNumber;
         public int RecordLength;
         public int I5;
         bool AllowDup;
 
-        public int TotalRecordNumber
+        public int RecordsNumber
         {
-            get { return DeletedRecordsNumber + RecordsNumber; }
+            get { return TotalRecordsNumber - DeletedRecordsNumber; }
         }
     }
 

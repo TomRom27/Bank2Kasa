@@ -158,7 +158,7 @@
     <None Include="Data\%24TYP.DAT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\KSOPER.PAS" />
+    <None Include="Data\OPR2017.DAT" />
     <None Include="Data\OPR2018.DAT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
