@@ -15,7 +15,7 @@ namespace Bank2Kasa.Service
 
     public interface IOperationService
     {
-        void Save(string importFilename, int year, IList<OperationVM> list);
+        void Save(string importFilename, int year, IList<OperationVM> list, Action<string, bool> progressCallback);
         ObservableCollection<OperationVM> ImportFromFile(SupportedImport importType, string filename, string trashold, bool aggregateDay);
         OperationListSettings LoadSettings();
         void SaveSettings(OperationListSettings settings);
@@ -154,11 +154,16 @@ namespace Bank2Kasa.Service
         }
         #endregion Settings
 
-        public void Save(string importFilename, int year, IList<OperationVM> list)
+        public void Save(string importFilename, int year, IList<OperationVM> list, Action<string,bool> progressCallback)
         {
+            progressCallback("Przygotowuję zapisaywanie ...", false);
             WriteListDiagnostics(list);
+            progressCallback("Zapisuję nowe operacje do Kasy ...", false);
             UpdateKasa(year, list);
+            progressCallback("Oznaczam istniejące operacje w Kasie ...", false);
+            progressCallback("Aktualizuję plik importu ...", false);
             RewriteImportFile(importFilename, list);
+            progressCallback("Zapisywanie zakończone", true);
         }
 
         private void RewriteImportFile(string filename, IList<OperationVM> list)

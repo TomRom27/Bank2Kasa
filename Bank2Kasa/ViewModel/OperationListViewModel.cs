@@ -74,6 +74,29 @@ namespace Bank2Kasa.ViewModel
             }
         }
 
+        private bool _IsSaving;
+        public bool IsSaving
+        {
+            get { return _IsSaving; }
+            set
+            {
+                _IsSaving = value;
+                RaisePropertyChanged(nameof(IsSaving));
+            }
+        }
+
+        private string _SavingStatusText;
+        public string SavingStatusText
+        {
+            get { return _SavingStatusText; }
+            set
+            {
+                _SavingStatusText = value;
+                RaisePropertyChanged(nameof(SavingStatusText));
+            }
+        }
+
+        
         #region Commands
 
         public RelayCommand Save { get; set; }
@@ -181,15 +204,33 @@ namespace Bank2Kasa.ViewModel
 
         private void SaveData()
         {
-            try
+            Task.Factory
+            /* in fact synchronously - as we use current sync context */
+            .StartNew(() =>
             {
-                operationService.Save(Settings.ImportFile, Settings.Year, Operations);
-            }
-            catch (Exception ex)
+                IsSaving = true;
+                operationService.Save(Settings.ImportFile, Settings.Year, Operations, UpdateSavingProgress);
+                IsSaving = false;
+
+            })
+            /* when completed, display response */
+            .ContinueWith((t) =>
             {
-                dialogService.ShowError("Coś poszło źle:\n" + ex.Message, "Błąd", "OK", null);
-            }
+                IsImporting = false;
+                if (t.Exception != null)
+                {
+                    dialogService.ShowError("Coś poszło źle:\n" + t.Exception.Message, "Błąd", "OK", null);
+                }
+                else
+                {
+                }
+            });
             SaveSettings();
+        }
+
+        private void UpdateSavingProgress(string statusText, bool isFinished)
+        {
+            SavingStatusText = statusText; // todo
         }
 
         private void DeleteGivenOperation(Service.Messages.DeleteOperation message)
