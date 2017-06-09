@@ -15,13 +15,13 @@ namespace Bank2Kasa.Service
 
     public interface IOperationService
     {
-        void Save(string importFilename, int year, IList<OperationVM> list, Action<string, bool> progressCallback);
         ObservableCollection<OperationVM> ImportFromFile(SupportedImport importType, string filename, string trashold, bool aggregateDay);
         OperationListSettings LoadSettings();
         void SaveSettings(OperationListSettings settings);
         void SetKasaFolder(string folder);
         string GetOperationTypeName(string operationTypeCode);
         bool GetOperationIncome(string operationTypeCode);
+        void Save(SaveOperationArgument arg);
     }
 
     public class OperationService : IOperationService
@@ -154,43 +154,45 @@ namespace Bank2Kasa.Service
         }
         #endregion Settings
 
-        public void Save(string importFilename, int year, IList<OperationVM> list, Action<string,bool> progressCallback)
+        public void Save(SaveOperationArgument arg)
         {
-            progressCallback("Przygotowuję zapisaywanie ...", false);
-            WriteListDiagnostics(list);
-            progressCallback("Zapisuję nowe operacje do Kasy ...", false);
-            UpdateKasa(year, list);
-            progressCallback("Oznaczam istniejące operacje w Kasie ...", false);
-            progressCallback("Aktualizuję plik importu ...", false);
-            RewriteImportFile(importFilename, list);
-            progressCallback("Zapisywanie zakończone", true);
+            arg.ProgressCallback("Przygotowuję zapisywanie ...", false);
+            WriteListDiagnostics(arg);
+            arg.ProgressCallback("Zapisuję nowe operacje do Kasy ...", false);
+            UpdateKasa(arg);
+            arg.ProgressCallback("Oznaczam istniejące operacje w Kasie ...", false);
+            arg.ProgressCallback("Aktualizuję plik importu ...", false);
+            RewriteImportFile(arg);
+            arg.ProgressCallback("Zapisywanie zakończone", true);
         }
 
-        private void RewriteImportFile(string filename, IList<OperationVM> list)
+        private void RewriteImportFile(SaveOperationArgument arg)
         {
             // todo
         }
 
-        private void UpdateKasa(int year, IList<OperationVM> list)
+        private void UpdateKasa(SaveOperationArgument arg)
         {
             // todo
             // rename IX
             // copy DAT
-            OperationStore store = new OperationStore(year, _KasaFolder);
-            foreach (var oprVM in list)
+            using (OperationStore store = new OperationStore(arg.KasaYear, _KasaFolder))
             {
-                if ((oprVM.Action == ActionToDo.Add2Kasa) || (oprVM.Action == ActionToDo.Add2KasaAndRemoveFromImport))
+                foreach (var oprVM in arg.OperationList)
+                {
+                    if ((oprVM.Action == ActionToDo.Add2Kasa) || (oprVM.Action == ActionToDo.Add2KasaAndRemoveFromImport))
                         store.Add(oprVM.Operation);
+                }
             }
         }
 
-        private static void WriteListDiagnostics(IList<OperationVM> list)
+        private static void WriteListDiagnostics(SaveOperationArgument arg)
         {
             decimal sAmount, sMoneyIn, sMoneyOut;
             sAmount = sMoneyIn = sMoneyOut = 0;
 
             System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Zapisuję dane do kasy");
-            foreach (var o in list)
+            foreach (var o in arg.OperationList)
             {
                 o.Add(ref sAmount, ref sMoneyIn, ref sMoneyOut);
                 System.Diagnostics.Trace.WriteLine(o.Date.ToString("dd.MM.yyyy") + " " + o.OperationType + " " +
@@ -202,5 +204,17 @@ namespace Bank2Kasa.Service
                                 sAmount.ToString().PadLeft(10) + " " + sMoneyIn.ToString().PadLeft(10) + " " + sMoneyOut.ToString().PadLeft(10));
             System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Zapis do kasy - koniec");
         }
+
+
+
+    }
+
+    public class SaveOperationArgument
+    {
+        public string ImportFilename;
+        public int KasaYear;
+        public IList<OperationVM> OperationList;
+        public Action<string, bool> ProgressCallback;
+        public volatile bool IsCancelled;
     }
 }

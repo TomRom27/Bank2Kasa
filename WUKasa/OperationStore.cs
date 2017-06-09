@@ -8,14 +8,15 @@ using BTreeFileUtil;
 
 namespace WUKasa
 {
-    public class OperationStore
+    public class OperationStore : IDisposable
     {
         public const string FileNameTemplate = "OPR{0}.DAT";
         public const string IndexExt = "IX";
         private int currentMax;
         private BTreeFile<Operation> btreeFile;
+        private bool disposed;
 
-        public OperationStore(int year, string path)
+        public OperationStore(int year, string path) 
         {
             currentMax = 0;
             btreeFile = new BTreeFile<Operation>(System.IO.Path.Combine(path, String.Format(FileNameTemplate, year)));
@@ -53,5 +54,30 @@ namespace WUKasa
                 }
             }
         }
+
+        #region IDisposable related
+        public void Dispose()
+        {
+            btreeFile.Dispose();
+            Dispose(true);
+
+            // Use SupressFinalize in case a subclass 
+            // of this type implements a finalizer.
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    btreeFile.Dispose();
+                }
+                // Indicate that the instance has been disposed.
+                disposed = true;
+            }
+        }
+        #endregion
     }
 }

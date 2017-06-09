@@ -74,23 +74,28 @@
                 </StackPanel>
             </Grid>
         </Border>
+        <!-- Importing status popup -->
         <Popup IsOpen="{Binding IsImporting}" PlacementTarget="{Binding ElementName=brdSettings}" PopupAnimation="Slide" Placement="Center">
             <Border BorderBrush="Gray" BorderThickness="2" Background="LightGreen">
                 <TextBlock Margin="25,25,25,25" Text="Importuję dane. Czekaj ..." />
             </Border>
         </Popup>
-
+        <!-- Importing status popup - end -->
+        <!-- Saving status popup -->
         <Popup IsOpen="{Binding IsSaving}" PlacementTarget="{Binding ElementName=brdSettings}" PopupAnimation="Slide" Placement="Center">
-            <Border BorderBrush="Gray" BorderThickness="2" >
+            <Border BorderBrush="Gray" BorderThickness="2" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" >
                 <StackPanel Orientation="Vertical" >
-                    <TextBlock Margin="25,25,25,25" Text="{Binding SavingStatusText}" Background="LightGreen"/>
-                    <StackPanel Orientation="Horizontal">
-                        <Button Margin="5,5,5,5" Content="Przerwij" />
-                        <Button Margin="5,5,5,5" Content="OK"/>
-                    </StackPanel>
+                    <DockPanel >
+                        <TextBlock Margin="5,5,25,15" Text="Zapisywanie do Kasy" FontWeight="Bold" FontSize="17" />
+                    </DockPanel>
+                    <TextBlock Margin="25,0,25,25" Text="{Binding SavingStatusText}" />
+                    <DockPanel >
+                        <Button Margin="5,5,5,5" Width="60" Content="Przerwij" Command="{Binding CancelSaving}"/>
+                    </DockPanel>
                 </StackPanel>
             </Border>
         </Popup>
+        <!-- Saving status popup - end -->
 
         <Border Margin="0,3,0,0" BorderBrush="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" BorderThickness="2" CornerRadius="5" >
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
