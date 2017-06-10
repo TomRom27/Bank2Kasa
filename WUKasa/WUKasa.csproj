@@ -51,6 +51,7 @@
     <Compile Include="OprRecord.cs" />
     <Compile Include="OprTypRecord.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StoredOperation.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BTreeFileUtil\BTreeFileUtil.csproj">

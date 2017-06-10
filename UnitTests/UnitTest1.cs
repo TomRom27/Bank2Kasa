@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -166,6 +166,56 @@ public class UnitTest1
 
         //assert
         long actualSize = new System.IO.FileInfo(System.IO.Path.Combine(path, $"OPR{year}.DAT")).Length;
-        Assert.AreEqual((store.CountWithDeleted+1)*240, actualSize);
+        Assert.AreEqual((store.CountWithDeleted + 1) * 240, actualSize);
+    }
+
+    [TestMethod]
+    public void CanReadAll()
+    {
+        int year = 2016;
+        List<StoredOperation> storedList = new List<StoredOperation>();
+
+        DateTime ds = DateTime.Now;
+
+        OperationStore store = new OperationStore(year, "");
+        store.ForEach((o, i) =>
+        {
+            if (!o.isDeleted)
+                storedList.Add(new StoredOperation() { Operation = o, Position = i });
+        });
+        DateTime ds2 = DateTime.Now;
+        System.Diagnostics.Trace.WriteLine("Read " + storedList.Count.ToString() + " in " + (ds2 - ds).TotalMilliseconds.ToString() + " ms");
+        ds = DateTime.Now;
+        storedList.Sort((o1, o2) => o1.Operation.Date.CompareTo(o2.Operation.Date));
+        System.Diagnostics.Trace.WriteLine("Sorted in " + (DateTime.Now - ds).TotalMilliseconds.ToString() + " ms");
+
+        Assert.AreEqual(store.Count, storedList.Count);
+    }
+
+    public class StoreCache
+    {
+        private List<StoredOperation> cachedList;
+
+        public StoreCache()
+        {
+            cachedList = new List<StoredOperation>();
+        }
+
+        public void Add(Operation o, int position)
+        {
+            if (!o.isDeleted)
+                cachedList.Add(new StoredOperation() { Operation = o, Position = position });
+        }
+
+        public int GetPosition(Operation o)
+        {
+            var found = cachedList.Find((co) => co.Operation.Date.Equals(o.Date) &&
+                                               co.Operation.OperationType.Equals(o.OperationType) &&
+                                               co.Operation.Amount.Equals(o.Amount));
+            if (found != null)
+                return found.Position;
+            else
+                return -1;
+        }
     }
 }

@@ -41,6 +41,16 @@ namespace WUKasa
 
         }
 
+        public void ForEach(Action<Operation,int> action)
+        {
+            for (int i = 1; i <= btreeFile.TotalRecordNumber; i++)
+            {
+                Operation opr = btreeFile.Get(i);
+                action(opr,i);
+
+            }
+        }
+
         private void EnsureMax()
         {
             if (currentMax == 0)
@@ -51,6 +61,17 @@ namespace WUKasa
                     if (!opr.isDeleted)
                         currentMax = Math.Max(currentMax, opr.Max);
                 }
+            }
+        }
+
+        private void EnsureMax2()
+        {
+            if (currentMax == 0)
+            {
+                ForEach((o,pos) => {
+                    if (!o.isDeleted)
+                        currentMax = Math.Max(currentMax, o.Max);
+                        });
             }
         }
     }
