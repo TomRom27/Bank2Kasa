@@ -182,7 +182,7 @@ namespace Bank2Kasa.Service
             {
                 AnnotateInKasa(arg, store);
 
-                AddNewOperations(arg, store);
+                // todo AddNewOperations(arg, store);
             }
 
         }
@@ -199,10 +199,15 @@ namespace Bank2Kasa.Service
 
         private static void AnnotateInKasa(SaveOperationArgument arg, OperationStore store)
         {
-            arg.ProgressCallback("Oznaczam istniejące operacje w Kasie ...", false);
+            int okCounter = 0;
             OperationCache operationCache = new OperationCache();
+
+            arg.ProgressCallback("Oznaczam istniejące operacje w Kasie ...", false);
+
             // load existing operations
             store.ForEach(operationCache.Add);
+            operationCache._StoredOperations.Sort((o1, o2) => o1.Operation.Date.CompareTo(o2.Operation.Date));
+
             // annotate
             foreach (var oprVM in arg.OperationList)
             {
@@ -211,6 +216,7 @@ namespace Bank2Kasa.Service
                     var found = operationCache.FindByDCAFirstPosition(oprVM.Operation);
                     if (found != null)
                     {
+                        okCounter++;
                         var i = found.Operation.Description.IndexOf(Operation.AnnotatedPrefix);
                         if (i == 0)
                         {
@@ -228,6 +234,7 @@ namespace Bank2Kasa.Service
                     }
                 }
             }
+            System.Diagnostics.Trace.WriteLine($"Znaleziono i oznaczono {okCounter} operacji w Kasie");
         }
 
         private static void WriteListDiagnostics(IList<OperationVM> operationList)

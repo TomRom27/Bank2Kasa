@@ -8,7 +8,7 @@ namespace WUKasa
 {
     public class OperationCache
     {
-        private List<StoredOperation> _StoredOperations;
+        public List<StoredOperation> _StoredOperations;
 
         public OperationCache()
         {
@@ -17,13 +17,18 @@ namespace WUKasa
 
         public void Add(Operation o, int position)
         {
-            _StoredOperations.Add(new StoredOperation() { Operation = o, Position = position });
+            if (!o.isDeleted)
+            {
+                // todo temp
+                if (o.Date.Month == 4)
+                _StoredOperations.Add(new StoredOperation() { Operation = o, Position = position });
+            }
         }
 
         public StoredOperation FindByDCAFirstPosition(Operation o)
         {
             var found = _StoredOperations.Find((so) => so.Operation.Date.Equals(o.Date) &&
-                                so.Operation.OperationCode.Equals(o.OperationCode) &&
+                                so.Operation.OperationCode.Equals(o.OperationType) &&
                                 so.Operation.Account.Equals(o.Account));
 
             return found;
