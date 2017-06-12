@@ -157,18 +157,20 @@ namespace Bank2Kasa.Service
         public void Save(SaveOperationArgument arg)
         {
             arg.ProgressCallback("Przygotowuję zapisywanie ...", false);
-            WriteListDiagnostics(arg);
-            arg.ProgressCallback("Zapisuję nowe operacje do Kasy ...", false);
+            WriteListDiagnostics(arg.OperationList);
+
             UpdateKasa(arg);
-            arg.ProgressCallback("Oznaczam istniejące operacje w Kasie ...", false);
-            arg.ProgressCallback("Aktualizuję plik importu ...", false);
+
             RewriteImportFile(arg);
+
             arg.ProgressCallback("Zapisywanie zakończone", true);
         }
 
         private void RewriteImportFile(SaveOperationArgument arg)
         {
             // todo
+            arg.ProgressCallback("Aktualizuję plik importu ...", false);
+
         }
 
         private void UpdateKasa(SaveOperationArgument arg)
@@ -178,21 +180,63 @@ namespace Bank2Kasa.Service
             // copy DAT
             using (OperationStore store = new OperationStore(arg.KasaYear, _KasaFolder))
             {
-                foreach (var oprVM in arg.OperationList)
+                AnnotateInKasa(arg, store);
+
+                AddNewOperations(arg, store);
+            }
+
+        }
+
+        private static void AddNewOperations(SaveOperationArgument arg, OperationStore store)
+        {
+            arg.ProgressCallback("Zapisuję nowe operacje do Kasy ...", false);
+            foreach (var oprVM in arg.OperationList)
+            {
+                if ((oprVM.Action == ActionToDo.Add2Kasa) || (oprVM.Action == ActionToDo.Add2KasaAndRemoveFromImport))
+                    store.Add(oprVM.Operation);
+            }
+        }
+
+        private static void AnnotateInKasa(SaveOperationArgument arg, OperationStore store)
+        {
+            arg.ProgressCallback("Oznaczam istniejące operacje w Kasie ...", false);
+            OperationCache operationCache = new OperationCache();
+            // load existing operations
+            store.ForEach(operationCache.Add);
+            // annotate
+            foreach (var oprVM in arg.OperationList)
+            {
+                if (oprVM.Action == ActionToDo.AnnotateInKasa)
                 {
-                    if ((oprVM.Action == ActionToDo.Add2Kasa) || (oprVM.Action == ActionToDo.Add2KasaAndRemoveFromImport))
-                        store.Add(oprVM.Operation);
+                    var found = operationCache.FindByDCAFirstPosition(oprVM.Operation);
+                    if (found != null)
+                    {
+                        var i = found.Operation.Description.IndexOf(Operation.AnnotatedPrefix);
+                        if (i == 0)
+                        {
+                            // annotate single operation - by removing special char
+                            found.Operation.Description.Remove(i, Operation.AnnotatedPrefix.Length);
+                            // save updated operation
+                            store.Put(found.Operation, found.Position);
+                        }
+                    }
+                    else
+                    {
+                        arg.ProblemFound = true;
+                        System.Diagnostics.Trace.WriteLine(oprVM.Operation.Date.ToString("dd.MM.yyyy") + " " + oprVM.Operation.OperationType + " " +
+                                                        oprVM.Operation.Amount.ToString().PadLeft(10) + " *** nie znaleziony w Kasie");
+                    }
                 }
             }
         }
 
-        private static void WriteListDiagnostics(SaveOperationArgument arg)
+        private static void WriteListDiagnostics(IList<OperationVM> operationList)
         {
             decimal sAmount, sMoneyIn, sMoneyOut;
             sAmount = sMoneyIn = sMoneyOut = 0;
 
-            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Zapisuję dane do kasy");
-            foreach (var o in arg.OperationList)
+            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Lista operacji");
+            foreach (var o in operationList)
             {
                 o.Add(ref sAmount, ref sMoneyIn, ref sMoneyOut);
                 System.Diagnostics.Trace.WriteLine(o.Date.ToString("dd.MM.yyyy") + " " + o.OperationType + " " +
@@ -202,7 +246,7 @@ namespace Bank2Kasa.Service
             }
             System.Diagnostics.Trace.WriteLine("W kasie zmiana".PadRight(51) + " " +
                                 sAmount.ToString().PadLeft(10) + " " + sMoneyIn.ToString().PadLeft(10) + " " + sMoneyOut.ToString().PadLeft(10));
-            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Zapis do kasy - koniec");
+            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Lista operacji - koniec");
         }
 
 
@@ -216,5 +260,6 @@ namespace Bank2Kasa.Service
         public IList<OperationVM> OperationList;
         public Action<string, bool> ProgressCallback;
         public volatile bool IsCancelled;
+        public volatile bool ProblemFound;
     }
 }

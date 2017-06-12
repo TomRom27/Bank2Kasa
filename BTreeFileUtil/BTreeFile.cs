@@ -122,6 +122,18 @@ namespace BTreeFileUtil
             return o;
         }
 
+        public void Put(T o, int recPos)
+        {
+            if (!isOpen)
+                Open();
+
+            if (recPos > header.TotalRecordsNumber)
+                throw new ArgumentOutOfRangeException($"Expected record position {recPos} is bigger then allowed {header.RecordsNumber}");
+
+            dataFile.Seek(recPos * dataSize, SeekOrigin.Begin);
+            dataFile.Write(o.GetBytes(), 0, dataSize);
+        }
+
         public void Close()
         {
             if (isOpen)

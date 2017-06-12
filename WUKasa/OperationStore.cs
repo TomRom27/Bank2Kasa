@@ -16,7 +16,7 @@ namespace WUKasa
         private BTreeFile<Operation> btreeFile;
         private bool disposed;
 
-        public OperationStore(int year, string path) 
+        public OperationStore(int year, string path)
         {
             currentMax = 0;
             btreeFile = new BTreeFile<Operation>(System.IO.Path.Combine(path, String.Format(FileNameTemplate, year)));
@@ -42,6 +42,20 @@ namespace WUKasa
 
         }
 
+        public void Put(Operation operation, int pos)
+        {
+            btreeFile.Put(operation, pos);
+        }
+
+        public void ForEach(Action<Operation, int> action)
+        {
+            for (int i = 1; i <= btreeFile.TotalRecordNumber; i++)
+            {
+                Operation opr = btreeFile.Get(i);
+                action(opr, i);
+            }
+        }
+
         private void EnsureMax()
         {
             if (currentMax == 0)
@@ -54,6 +68,19 @@ namespace WUKasa
                 }
             }
         }
+
+        private void EnsureMax2()
+        {
+            if (currentMax == 0)
+            {
+                ForEach((opr, i) =>
+                {
+                    if (!opr.isDeleted)
+                        currentMax = Math.Max(currentMax, opr.Max);
+                });
+            }
+        }
+
 
         #region IDisposable related
         public void Dispose()
