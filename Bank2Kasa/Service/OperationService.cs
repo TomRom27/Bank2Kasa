@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -168,9 +168,39 @@ namespace Bank2Kasa.Service
 
         private void RewriteImportFile(SaveOperationArgument arg)
         {
-            // todo
-            arg.ProgressCallback("Aktualizuję plik importu ...", false);
+            int lineNo = 0;
 
+            arg.ProgressCallback("Aktualizuję plik importu ...", false);
+            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Aktualizuję plik importu");
+
+            string bakName = IOHelper.RenameToExtension(arg.ImportFilename, "BAK");
+            using (var inputFile = new StreamReader(bakName, Encoding.GetEncoding(1250)))
+            using (var outputFile = new StreamWriter(arg.ImportFilename, false, Encoding.GetEncoding(1250)))
+            {
+                while (!inputFile.EndOfStream)
+                {
+                    lineNo++;
+                    var line = inputFile.ReadLine();
+                    if (!OperationExistsFor(arg.OperationList, lineNo))
+                    {
+                        // if no operation found -> we must write the line to the new file
+                        outputFile.WriteLine(line);
+                    }
+                }
+            }
+            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Koniec");
+
+        }
+
+        private bool OperationExistsFor(IList<OperationVM> operationList, int lineNo)
+        {
+            foreach (var oVM in operationList)
+            {
+                if ((oVM.Operation is ImportedOperation) &&
+                     (((mBankData.CsvExportOrigin)((ImportedOperation)oVM.Operation).OperationOrigin).LineNumber == lineNo))
+                    return true;
+            }
+            return false;
         }
 
         private void UpdateKasa(SaveOperationArgument arg)
@@ -182,19 +212,25 @@ namespace Bank2Kasa.Service
             {
                 AnnotateInKasa(arg, store);
 
-                // todo AddNewOperations(arg, store);
+                AddNewOperations(arg, store);
             }
 
         }
 
         private static void AddNewOperations(SaveOperationArgument arg, OperationStore store)
         {
+            int okCounter = 0;
+
             arg.ProgressCallback("Zapisuję nowe operacje do Kasy ...", false);
             foreach (var oprVM in arg.OperationList)
             {
                 if ((oprVM.Action == ActionToDo.Add2Kasa) || (oprVM.Action == ActionToDo.Add2KasaAndRemoveFromImport))
+                {
+                    okCounter++;
                     store.Add(oprVM.Operation);
+                }
             }
+            System.Diagnostics.Trace.WriteLine($"Dodano {okCounter} operacji w Kasie");
         }
 
         private static void AnnotateInKasa(SaveOperationArgument arg, OperationStore store)
@@ -203,10 +239,10 @@ namespace Bank2Kasa.Service
             OperationCache operationCache = new OperationCache();
 
             arg.ProgressCallback("Oznaczam istniejące operacje w Kasie ...", false);
+            System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Oznaczam istniejące operacje w Kasie");
 
             // load existing operations
             store.ForEach(operationCache.Add);
-            operationCache._StoredOperations.Sort((o1, o2) => o1.Operation.Date.CompareTo(o2.Operation.Date));
 
             // annotate
             foreach (var oprVM in arg.OperationList)
@@ -221,7 +257,7 @@ namespace Bank2Kasa.Service
                         if (i == 0)
                         {
                             // annotate single operation - by removing special char
-                            found.Operation.Description.Remove(i, Operation.AnnotatedPrefix.Length);
+                            found.Operation.Description = found.Operation.Description.Remove(i, Operation.AnnotatedPrefix.Length);
                             // save updated operation
                             store.Put(found.Operation, found.Position);
                         }

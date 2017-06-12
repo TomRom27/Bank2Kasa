@@ -220,7 +220,7 @@ namespace Bank2Kasa.ViewModel
                 IsImporting = false;
                 if (t.Exception != null)
                 {
-                    dialogService.ShowError("Coś poszło źle:\n" + t.Exception.Message, "Błąd", "OK", null);
+                    dialogService.ShowError("Coś poszło źle:\n" + t.Exception.InnerException.Message, "Błąd", "OK", null);
                 }
             });
             SaveSettings();

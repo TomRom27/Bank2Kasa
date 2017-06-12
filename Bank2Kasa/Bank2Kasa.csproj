@@ -80,6 +80,7 @@
     <Compile Include="Converters\BooleanToVisibility.cs" />
     <Compile Include="Converters\BooleanToVisibilityHidden.cs" />
     <Compile Include="Converters\PolishDateConverter.cs" />
+    <Compile Include="Service\IOHelper.cs" />
     <Compile Include="Service\Messages\OnOperationAction.cs" />
     <Compile Include="Service\OperationService.cs" />
     <Compile Include="Service\SerializationHelper.cs" />

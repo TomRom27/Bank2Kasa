@@ -20,16 +20,17 @@ namespace WUKasa
             if (!o.isDeleted)
             {
                 // todo temp
-                if (o.Date.Month == 4)
-                _StoredOperations.Add(new StoredOperation() { Operation = o, Position = position });
+                if ((o.Date.Month == 4) && (o.OperationType == "13"))
+                    _StoredOperations.Add(new StoredOperation() { Operation = o, Position = position });
             }
         }
 
         public StoredOperation FindByDCAFirstPosition(Operation o)
         {
+
             var found = _StoredOperations.Find((so) => so.Operation.Date.Equals(o.Date) &&
-                                so.Operation.OperationCode.Equals(o.OperationType) &&
-                                so.Operation.Account.Equals(o.Account));
+                                so.Operation.OperationType.Equals(o.OperationType) &&
+                                so.Operation.Amount.Equals(o.Amount));
 
             return found;
         }
