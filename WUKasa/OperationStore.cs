@@ -8,12 +8,13 @@ using BTreeFileUtil;
 
 namespace WUKasa
 {
-    public class OperationStore
+    public class OperationStore : IDisposable
     {
         public const string FileNameTemplate = "OPR{0}.DAT";
         public const string IndexExt = "IX";
         private int currentMax;
         private BTreeFile<Operation> btreeFile;
+        private bool disposed;
 
         public OperationStore(int year, string path)
         {
@@ -41,13 +42,17 @@ namespace WUKasa
 
         }
 
-        public void ForEach(Action<Operation,int> action)
+        public void Put(Operation operation, int pos)
+        {
+            btreeFile.Put(operation, pos);
+        }
+
+        public void ForEach(Action<Operation, int> action)
         {
             for (int i = 1; i <= btreeFile.TotalRecordNumber; i++)
             {
                 Operation opr = btreeFile.Get(i);
-                action(opr,i);
-
+                action(opr, i);
             }
         }
 
@@ -68,11 +73,38 @@ namespace WUKasa
         {
             if (currentMax == 0)
             {
-                ForEach((o,pos) => {
-                    if (!o.isDeleted)
-                        currentMax = Math.Max(currentMax, o.Max);
-                        });
+                ForEach((opr, i) =>
+                {
+                    if (!opr.isDeleted)
+                        currentMax = Math.Max(currentMax, opr.Max);
+                });
             }
         }
+
+
+        #region IDisposable related
+        public void Dispose()
+        {
+            btreeFile.Dispose();
+            Dispose(true);
+
+            // Use SupressFinalize in case a subclass 
+            // of this type implements a finalizer.
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    btreeFile.Dispose();
+                }
+                // Indicate that the instance has been disposed.
+                disposed = true;
+            }
+        }
+        #endregion
     }
 }

@@ -45,6 +45,7 @@
     <Compile Include="ImportConfigurationSection.cs" />
     <Compile Include="Operation.cs" />
     <Compile Include="ImportedOperation.cs" />
+    <Compile Include="OperationCache.cs" />
     <Compile Include="OperationStore.cs" />
     <Compile Include="OperationType.cs" />
     <Compile Include="OperationTypeStore.cs" />

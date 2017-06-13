@@ -74,6 +74,29 @@ namespace Bank2Kasa.ViewModel
             }
         }
 
+        private bool _IsSaving;
+        public bool IsSaving
+        {
+            get { return _IsSaving; }
+            set
+            {
+                _IsSaving = value;
+                RaisePropertyChanged(nameof(IsSaving));
+            }
+        }
+
+        private string _SavingStatusText;
+        public string SavingStatusText
+        {
+            get { return _SavingStatusText; }
+            set
+            {
+                _SavingStatusText = value;
+                RaisePropertyChanged(nameof(SavingStatusText));
+            }
+        }
+
+
         #region Commands
 
         public RelayCommand Save { get; set; }
@@ -81,6 +104,7 @@ namespace Bank2Kasa.ViewModel
         public RelayCommand SelectKasa { get; set; }
         public RelayCommand SelectImport { get; set; }
         public RelayCommand ShowSum { get; set; }
+        public RelayCommand CancelSaving { get; set; }
         #endregion
 
         #region private methods
@@ -92,6 +116,7 @@ namespace Bank2Kasa.ViewModel
             SelectKasa = new RelayCommand(SelectKasaFolder);
             SelectImport = new RelayCommand(SelectImportFile);
             ShowSum = new RelayCommand(ShowOperationSum);
+            CancelSaving = new RelayCommand(CancelPendigSave);
         }
 
 
@@ -134,23 +159,6 @@ namespace Bank2Kasa.ViewModel
             foreach (var o in Operations)
                 o.Add(ref sAmount, ref sMoneyIn, ref sMoneyOut);
         }
-        //private void ImportData2()
-        //{
-        //    IsImporting = true;
-        //    try
-        //    {
-        //        Operations = operationService.ImportFromFile(SupportedImport.mBankCsv, Settings.ImportFile, Settings.Trashold);
-        //        IsImporting = false;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        IsImporting = false;
-        //        dialogService.ShowError("Coś poszło źle:\n" + ex.Message, "Błąd", "OK", null);
-        //    }
-
-        //    SaveSettings();
-        //    IsImporting = false;
-        //}
 
         private void ImportData()
         {
@@ -179,17 +187,48 @@ namespace Bank2Kasa.ViewModel
             dialogService.SetNormal();
         }
 
+        private void CancelPendigSave()
+        {
+            // todo - how to control pending saving
+            IsSaving = false;
+        }
+
+        SaveOperationArgument SaveArgument;
         private void SaveData()
         {
-            try
+            SaveOperationArgument arg = new SaveOperationArgument()
             {
-                operationService.Save(Settings.ImportFile, Settings.Year, Operations);
-            }
-            catch (Exception ex)
+                ImportFilename = Settings.ImportFile,
+                KasaYear = Settings.Year,
+                OperationList = Operations,
+                ProgressCallback = UpdateSavingProgress,
+                IsCancelled = false
+            };
+
+            Task.Factory
+            /* in fact synchronously - as we use current sync context */
+            .StartNew(() =>
             {
-                dialogService.ShowError("Coś poszło źle:\n" + ex.Message, "Błąd", "OK", null);
-            }
+                IsSaving = true;
+                operationService.Save(arg);
+                IsSaving = false;
+
+            })
+            /* when completed, display response */
+            .ContinueWith((t) =>
+            {
+                IsImporting = false;
+                if (t.Exception != null)
+                {
+                    dialogService.ShowError("Coś poszło źle:\n" + t.Exception.InnerException.Message, "Błąd", "OK", null);
+                }
+            });
             SaveSettings();
+        }
+
+        private void UpdateSavingProgress(string statusText, bool isFinished)
+        {
+            SavingStatusText = statusText; // todo
         }
 
         private void DeleteGivenOperation(Service.Messages.DeleteOperation message)

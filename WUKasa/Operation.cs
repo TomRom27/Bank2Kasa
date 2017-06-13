@@ -21,6 +21,7 @@ namespace WUKasa
         public const string OperationInCard = "13";
         public const string OperationInCashout = "12";
         private const string AccountTemplate = "500-0{0}-{1}";
+        public const string AnnotatedPrefix = ">";
         #endregion
 
         private OprRecord oprRecord;

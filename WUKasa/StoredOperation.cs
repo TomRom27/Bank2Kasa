@@ -8,7 +8,7 @@ namespace WUKasa
 {
     public class StoredOperation
     {
-        public Operation Operation { get; set;  }
+        public Operation Operation { get; set; }
         public int Position { get; set; }
     }
 }
