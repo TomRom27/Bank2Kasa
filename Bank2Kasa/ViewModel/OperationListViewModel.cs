@@ -158,6 +158,8 @@ namespace Bank2Kasa.ViewModel
             // todo
             foreach (var o in Operations)
                 o.Add(ref sAmount, ref sMoneyIn, ref sMoneyOut);
+
+            dialogService.ShowMessage($"Suma\t={sAmount,10:N2}\nNa Plus\t={sMoneyIn,10:N2}\nNa Minus\t={sMoneyOut,10:N2}", "Suma");
         }
 
         private void ImportData()
