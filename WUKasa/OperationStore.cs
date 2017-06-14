@@ -15,11 +15,13 @@ namespace WUKasa
         private int currentMax;
         private BTreeFile<Operation> btreeFile;
         private bool disposed;
+        private string filename;
 
         public OperationStore(int year, string path)
         {
             currentMax = 0;
-            btreeFile = new BTreeFile<Operation>(System.IO.Path.Combine(path, String.Format(FileNameTemplate, year)));
+            filename = System.IO.Path.Combine(path, String.Format(FileNameTemplate, year));
+            btreeFile = new BTreeFile<Operation>(filename);
         }
 
         public int Count
@@ -42,6 +44,16 @@ namespace WUKasa
 
         }
 
+        public string Filename
+        {
+            get { return filename; }
+        }
+
+        public string IxFilename
+        {
+            get { return System.IO.Path.ChangeExtension(Filename, IndexExt); }
+
+        }
         public void Put(Operation operation, int pos)
         {
             btreeFile.Put(operation, pos);

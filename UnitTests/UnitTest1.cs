@@ -192,30 +192,4 @@ public class UnitTest1
         Assert.AreEqual(store.Count, storedList.Count);
     }
 
-    public class StoreCache
-    {
-        private List<StoredOperation> cachedList;
-
-        public StoreCache()
-        {
-            cachedList = new List<StoredOperation>();
-        }
-
-        public void Add(Operation o, int position)
-        {
-            if (!o.isDeleted)
-                cachedList.Add(new StoredOperation() { Operation = o, Position = position });
-        }
-
-        public int GetPosition(Operation o)
-        {
-            var found = cachedList.Find((co) => co.Operation.Date.Equals(o.Date) &&
-                                               co.Operation.OperationType.Equals(o.OperationType) &&
-                                               co.Operation.Amount.Equals(o.Amount));
-            if (found != null)
-                return found.Position;
-            else
-                return -1;
-        }
-    }
 }

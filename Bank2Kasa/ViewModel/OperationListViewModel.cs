@@ -21,11 +21,11 @@ namespace Bank2Kasa.ViewModel
         {
             Operations = new ObservableCollection<OperationVM>();
 
-            //if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
-            //{
-            Operations.Add(new OperationVM(new WUKasa.Operation() { Amount = 100, Description = "Operacja przychodowa", Date = DateTime.Today }));
+            if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
+            {
+                Operations.Add(new OperationVM(new WUKasa.Operation() { Amount = 100, Description = "Operacja przychodowa", Date = DateTime.Today }));
 
-            //}
+            }
 
             CreateCommands();
             SubscribeToMessages();
@@ -177,7 +177,7 @@ namespace Bank2Kasa.ViewModel
                 IsImporting = false;
                 if (t.Exception != null)
                 {
-                    dialogService.ShowError("Coś poszło źle:\n" + t.Exception.Message, "Błąd", "OK", null);
+                    dialogService.ShowError("Coś poszło źle:\n" + t.Exception.InnerException.Message, "Błąd", "OK", null);
                 }
                 else
                 {
@@ -193,17 +193,22 @@ namespace Bank2Kasa.ViewModel
             IsSaving = false;
         }
 
-        SaveOperationArgument SaveArgument;
         private void SaveData()
         {
+            bool isSuccess = false;
             SaveOperationArgument arg = new SaveOperationArgument()
             {
                 ImportFilename = Settings.ImportFile,
                 KasaYear = Settings.Year,
                 OperationList = Operations,
                 ProgressCallback = UpdateSavingProgress,
+                BackupImportFile = true, // todo - get from UI
+                BackupDatFile = true, // todo - get from UI
+                RemoveIxFile = true, // todo - get from UI
                 IsCancelled = false
             };
+
+            SaveSettings();
 
             Task.Factory
             /* in fact synchronously - as we use current sync context */
@@ -212,6 +217,19 @@ namespace Bank2Kasa.ViewModel
                 IsSaving = true;
                 operationService.Save(arg);
                 IsSaving = false;
+                System.Windows.Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, 
+                    new Action(() => {
+                                int i = 0;
+                                while (i <= arg.OperationList.Count - 1)
+                                {
+                                    if (arg.OperationList[i].CanDelete)
+                                        arg.OperationList.RemoveAt(i);
+                                    else
+                                        i++;
+                                }
+
+                            })
+                );               
 
             })
             /* when completed, display response */
@@ -223,7 +241,8 @@ namespace Bank2Kasa.ViewModel
                     dialogService.ShowError("Coś poszło źle:\n" + t.Exception.InnerException.Message, "Błąd", "OK", null);
                 }
             });
-            SaveSettings();
+
+
         }
 
         private void UpdateSavingProgress(string statusText, bool isFinished)

@@ -131,11 +131,25 @@ namespace Bank2Kasa.ViewModel
                 switch (Action)
                 {
                     case ActionToDo.Add2KasaAndRemoveFromImport: return "Dodaj do Kasy, usuń z importu";
-                    case ActionToDo.AnnotateInKasa:              return "Oznacz istniejący w Kasie";
+                    case ActionToDo.AnnotateInKasa:              return "Oznacz w Kasie, usuń z importu";
                     case ActionToDo.RemoveFromImport:            return "Tylko usuń z importu";
                     case ActionToDo.Add2Kasa:                    return "Dodaj do Kasy";
                     default: return "Nic nie rób";
                 }
+            }
+        }
+
+        private bool canDelete;
+        public bool CanDelete
+        {
+            get
+            {
+                return canDelete;
+            }
+            set
+            {
+                canDelete = value;
+                RaisePropertyChanged(nameof(CanDelete));
             }
         }
 
@@ -261,9 +275,11 @@ namespace Bank2Kasa.ViewModel
                 if (IsIncome)
                 {
                     MoneyIn = value;
+                    MoneyOut = 0;
                 }
                 else
                 {
+                    MoneyIn = 0;
                     MoneyOut = value;
                 }
             }

@@ -19,11 +19,32 @@ namespace Bank2Kasa.Service
                 if (File.Exists(newName))
                 {
                     counter++;
-                    newName = Path.Combine(Path.GetDirectoryName(filename), Path.Combine(Path.GetFileNameWithoutExtension(newName) + $" ({counter})", ext));
+                    newName = Path.Combine(Path.GetDirectoryName(filename), Path.ChangeExtension(Path.GetFileNameWithoutExtension(newName) + $" ({counter})", ext));
                 }
                 else
                 {
                     File.Move(filename, newName);
+                    return newName;
+                }
+            }
+        }
+
+        public static string CopyToExtention(string filename, string ext)
+        {
+            string newName;
+            int counter = 0;
+
+            newName = Path.ChangeExtension(filename, ext);
+            while (true)
+            {
+                if (File.Exists(newName))
+                {
+                    counter++;
+                    newName = Path.Combine(Path.GetDirectoryName(filename), Path.ChangeExtension(Path.GetFileNameWithoutExtension(newName) + $" ({counter})", ext));
+                }
+                else
+                {
+                    File.Copy(filename, newName);
                     return newName;
                 }
             }

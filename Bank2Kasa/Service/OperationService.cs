@@ -173,6 +173,7 @@ namespace Bank2Kasa.Service
             arg.ProgressCallback("Aktualizuję plik importu ...", false);
             System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Aktualizuję plik importu");
 
+
             string bakName = IOHelper.RenameToExtension(arg.ImportFilename, "BAK");
             using (var inputFile = new StreamReader(bakName, Encoding.GetEncoding(1250)))
             using (var outputFile = new StreamWriter(arg.ImportFilename, false, Encoding.GetEncoding(1250)))
@@ -188,36 +189,52 @@ namespace Bank2Kasa.Service
                     }
                 }
             }
+            // if no need for copy of import file - we need to remove it now
+            if (!arg.BackupImportFile)
+                File.Delete(bakName);
             System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Koniec");
 
         }
 
         private bool OperationExistsFor(IList<OperationVM> operationList, int lineNo)
         {
-            foreach (var oVM in operationList)
-            {
-                if ((oVM.Operation is ImportedOperation) &&
-                     (((mBankData.CsvExportOrigin)((ImportedOperation)oVM.Operation).OperationOrigin).LineNumber == lineNo))
-                    return true;
-            }
-            return false;
+            return operationList.FirstOrDefault((oVM) =>
+             oVM.CanDelete &&
+              (oVM.Operation is ImportedOperation) &&
+              ((mBankData.CsvExportOrigin)((ImportedOperation)oVM.Operation).OperationOrigin != null) &&
+              (((mBankData.CsvExportOrigin)((ImportedOperation)oVM.Operation).OperationOrigin).LineNumber == lineNo)
+            ) != null;
         }
 
         private void UpdateKasa(SaveOperationArgument arg)
         {
-            // todo
-            // rename IX
-            // copy DAT
+            string DatBackupExt = "BAD";
             using (OperationStore store = new OperationStore(arg.KasaYear, _KasaFolder))
             {
+                if (arg.BackupDatFile)
+                {
+                    System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + "Kopiowanie pliku DAT przed zmianą czegokolwiek");
+                    // make a copy of the file before any changes 
+                    var backupName = IOHelper.CopyToExtention(store.Filename, DatBackupExt);
+                    System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + "Skopiowany jako " + backupName);
+                }
+                // we do the annotation as a first step 'cause we don't have to consider new operations i.e. added as result of import
                 AnnotateInKasa(arg, store);
 
-                AddNewOperations(arg, store);
-            }
+                var added = AddNewOperations(arg, store);
 
+                MarkForDeletion(arg);
+
+                // we delete IX file if new operations have been added (= IX is not current one)
+                if ((added > 0) && (File.Exists(store.IxFilename)))
+                {
+                    System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + "Deleting IX file");
+                    File.Delete(store.IxFilename);
+                }
+            }
         }
 
-        private static void AddNewOperations(SaveOperationArgument arg, OperationStore store)
+        private static int AddNewOperations(SaveOperationArgument arg, OperationStore store)
         {
             int okCounter = 0;
 
@@ -228,9 +245,11 @@ namespace Bank2Kasa.Service
                 {
                     okCounter++;
                     store.Add(oprVM.Operation);
+                    oprVM.CanDelete = true;
                 }
             }
             System.Diagnostics.Trace.WriteLine($"Dodano {okCounter} operacji w Kasie");
+            return okCounter;
         }
 
         private static void AnnotateInKasa(SaveOperationArgument arg, OperationStore store)
@@ -260,6 +279,7 @@ namespace Bank2Kasa.Service
                             found.Operation.Description = found.Operation.Description.Remove(i, Operation.AnnotatedPrefix.Length);
                             // save updated operation
                             store.Put(found.Operation, found.Position);
+                            oprVM.CanDelete = true;
                         }
                     }
                     else
@@ -271,6 +291,13 @@ namespace Bank2Kasa.Service
                 }
             }
             System.Diagnostics.Trace.WriteLine($"Znaleziono i oznaczono {okCounter} operacji w Kasie");
+        }
+
+        private void MarkForDeletion(SaveOperationArgument arg)
+        {
+            foreach (var oVM in arg.OperationList)
+                if (oVM.Action == WUKasa.ActionToDo.RemoveFromImport)
+                    oVM.CanDelete = true;
         }
 
         private static void WriteListDiagnostics(IList<OperationVM> operationList)
@@ -302,6 +329,9 @@ namespace Bank2Kasa.Service
         public int KasaYear;
         public IList<OperationVM> OperationList;
         public Action<string, bool> ProgressCallback;
+        public bool BackupImportFile;
+        public bool BackupDatFile;
+        public bool RemoveIxFile;
         public volatile bool IsCancelled;
         public volatile bool ProblemFound;
     }
