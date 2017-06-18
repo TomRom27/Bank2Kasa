@@ -41,6 +41,35 @@ namespace WUKasa
             Max = GetMaxFromTime();
         }
 
+        public virtual Operation Clone()
+        {
+            Operation cloned = new Operation();
+            CopyTo(cloned);
+
+            return cloned;
+        }
+
+
+        public void CopyTo(Operation copy)
+        {
+            copy.Amount = this.Amount;
+            copy.Account = this.Account;
+            copy.Balance = this.Balance;
+            copy.City = this.City;
+            copy.Date = this.Date;
+            copy.Description = this.Description;
+            copy.FinanceCode = this.FinanceCode;
+            copy.IsIncome = this.IsIncome;
+            copy.Max = this.Max;
+            copy.Name1 = this.Name1;
+            copy.Name2 = this.Name2;
+            copy.MoneyIn = this.MoneyIn;
+            copy.MoneyOut = this.MoneyOut;
+            copy.OperationCode = this.OperationCode;
+            copy.OperationType = this.OperationType;
+            copy.PrintNumber = this.PrintNumber;
+            copy.Street = this.Street;
+        }
         public static string FormAccount(string code, string trashold)
         {
             return String.Format(AccountTemplate, code, trashold);
@@ -145,6 +174,8 @@ namespace WUKasa
             set { oprRecord.Max = value; }
         }
         #endregion
+
+
 
         public static int GetMaxFromTime()
         {

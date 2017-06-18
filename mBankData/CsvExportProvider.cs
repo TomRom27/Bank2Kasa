@@ -181,7 +181,7 @@ namespace mBankData
             opr.Description = S2Cammel(mBOperation.Title);
             opr.Name1 = S2Cammel(mBOperation.SenderReceiver);
             if (opr.Name1.Length < mBOperation.SenderReceiver.Length)
-                opr.Name2 = mBOperation.SenderReceiver.Substring(opr.Name1.Length);
+                opr.Name2 = S2Cammel(mBOperation.SenderReceiver.Substring(opr.Name1.Length));
 
             opr.BankOperationType = S2Cammel(mBOperation.OperationDescription);
             opr.FullDescription = S2Cammel(mBOperation.Title);
@@ -277,8 +277,8 @@ namespace mBankData
         {
             input = input.Replace(MonthToken, mBankOpr.OperationDate.Month.ToString());
             input = input.Replace(YearToken, mBankOpr.OperationDate.Year.ToString());
-            input = input.Replace(BankDescriptionToken, mBankOpr.OperationDescription);
-            input = input.Replace(BankTitleToken, mBankOpr.Title);
+            input = input.Replace(BankDescriptionToken, S2Cammel( mBankOpr.OperationDescription));
+            input = input.Replace(BankTitleToken, S2Cammel(mBankOpr.Title));
 
             return input;
         }

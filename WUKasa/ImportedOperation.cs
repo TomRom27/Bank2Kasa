@@ -30,5 +30,14 @@ namespace WUKasa
         public string FullDescription { get; set; }
 
         public ActionToDo Action { get; set; }
+
+        public override Operation Clone()
+        {
+            ImportedOperation cloned = new ImportedOperation();
+            CopyTo(cloned);
+            cloned.Action = this.Action;
+
+            return cloned;
+        }
     }
 }

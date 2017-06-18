@@ -20,8 +20,8 @@ namespace WUKasa
             if (!o.isDeleted)
             {
                 // todo temp
-                if ((o.Date.Month == 4) && (o.OperationType == "13"))
-                    _StoredOperations.Add(new StoredOperation() { Operation = o, Position = position });
+                //if ((o.Date.Month == 4) && (o.OperationType == "13"))
+                _StoredOperations.Add(new StoredOperation() { Operation = o, Position = position });
             }
         }
 

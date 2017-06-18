@@ -347,20 +347,9 @@ namespace Bank2Kasa.ViewModel
 
         public OperationVM Clone()
         {
-            return new OperationVM()
-            {
-                Action = this.Action,
-                Amount = this.Amount,
-                BankOperationDescription = this.BankOperationDescription,
-                Date = this.Date,
-                Description = this.Description,
-                FullDescription = this.FullDescription,
-                IsEditMode = this.IsEditMode,
-                IsIncome = this.IsIncome,
-                MoneyIn = this.MoneyIn,
-                MoneyOut = this.MoneyOut,
-                OperationType = this.OperationType
-            };
+            OperationVM cloned = new OperationVM(this.Operation.Clone());
+
+            return cloned;
         }
 
         public void Add(ref decimal sAmount, ref decimal sMoneyIn, ref decimal sMoneyOut)

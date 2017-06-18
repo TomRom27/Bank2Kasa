@@ -268,7 +268,9 @@ namespace Bank2Kasa.ViewModel
 
         private void CopyGivenOperation(Service.Messages.CopyOperation message)
         {
+
             OperationVM newOperation = message.Operation.Clone();
+        
             var currentIndex = Operations.IndexOf(message.Operation);
             if (currentIndex >= 0)
             {
