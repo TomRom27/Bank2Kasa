@@ -261,7 +261,7 @@ namespace mBankData
             opr.OperationDate = DateTime.Parse(items[0], mBankFormatProvider);
             opr.AccountingDate = DateTime.Parse(items[1], mBankFormatProvider);
             opr.OperationDescription = items[2];
-            opr.Title = items[3].TrimStart(obsoleteDelimiters).TrimEnd(obsoleteDelimiters);
+            opr.Title = TrimInnerButOne(items[3].TrimStart(obsoleteDelimiters).TrimEnd(obsoleteDelimiters));
             opr.SenderReceiver = items[4].TrimStart(obsoleteDelimiters).TrimEnd(obsoleteDelimiters);
             opr.AccountNumber = items[5].TrimStart(obsoleteDelimiters).TrimEnd(obsoleteDelimiters);
             opr.Amount = Decimal.Parse(items[6], mBankFormatProvider);
@@ -319,6 +319,11 @@ namespace mBankData
                 return s;
 
             return s.Substring(0, 1).ToUpper() + s.Substring(1).ToLower();
+        }
+
+        private string TrimInnerButOne(string s)
+        {            
+            return System.Text.RegularExpressions.Regex.Replace(s, @"\s{2,}", " ");
         }
 
         private ImportConfigurationSection GetImportConfiguration()

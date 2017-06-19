@@ -26,6 +26,13 @@ namespace Bank2Kasa.ViewModel
             IsEditMode = false;
             CreateCommands();
             operationService = ServiceLocator.Current.GetInstance<IOperationService>();
+            if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
+            {
+                OperationType = "01";
+                Description = "Description of the operation 35long";
+                FullDescription = "Full descriptino of the empty operation when we test long";
+                BankOperationDescription = "aasdasdasdsa asdassaddasd ";
+            }
         }
 
         [GalaSoft.MvvmLight.Ioc.PreferredConstructor]
@@ -131,9 +138,9 @@ namespace Bank2Kasa.ViewModel
                 switch (Action)
                 {
                     case ActionToDo.Add2KasaAndRemoveFromImport: return "Dodaj do Kasy, usuń z importu";
-                    case ActionToDo.AnnotateInKasa:              return "Oznacz w Kasie, usuń z importu";
-                    case ActionToDo.RemoveFromImport:            return "Tylko usuń z importu";
-                    case ActionToDo.Add2Kasa:                    return "Dodaj do Kasy";
+                    case ActionToDo.AnnotateInKasa: return "Oznacz w Kasie, usuń z importu";
+                    case ActionToDo.RemoveFromImport: return "Tylko usuń z importu";
+                    case ActionToDo.Add2Kasa: return "Dodaj do Kasy";
                     default: return "Nic nie rób";
                 }
             }
@@ -188,7 +195,10 @@ namespace Bank2Kasa.ViewModel
         {
             get
             {
-                return operationService.GetOperationTypeName(operation.OperationType);
+                if (operationService != null)
+                    return operationService.GetOperationTypeName(operation.OperationType);
+                else
+                    return "operationService is null";
             }
 
         }
