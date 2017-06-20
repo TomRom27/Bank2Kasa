@@ -23,7 +23,8 @@ namespace Bank2Kasa.ViewModel
 
             if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
             {
-                Operations.Add(new OperationVM(new WUKasa.Operation() { Amount = 100, Description = "Operacja przychodowa", Date = DateTime.Today }));
+                Operations.Add(new OperationVM() { Action = WUKasa.ActionToDo.Add2KasaAndRemoveFromImport, Amount = 100, OperationType="10", Description = "Operacja przychodowa", Date = DateTime.Today });
+                Operations.Add(new OperationVM() { Action = WUKasa.ActionToDo.Add2Kasa, Amount = 100, OperationType = "15", Description = "Płatność przelewem", Date = DateTime.Today });
 
             }
 

@@ -27,13 +27,14 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    <Grid>
+    <Grid Background="{Binding Action, Converter={StaticResource Act2ColConverter}}">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
@@ -47,25 +48,31 @@
             MouseAction="LeftDoubleClick"
             Command="{Binding StartEdit}"/>
         </Grid.InputBindings>
-        <TextBox Name="txbData" Grid.Column="0" Grid.Row="1" Height="24" Text="{Binding Date, Converter={StaticResource DateConverter}}" FontSize="14" FontWeight="Bold" IsEnabled="{Binding IsEditMode}"/>
-        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Vertical" MinWidth="50" >
+        <StackPanel Grid.Column="2" Grid.Row="0" Orientation="Vertical" MinWidth="50" >
             <StackPanel Orientation="Horizontal">
                 <TextBox Height="24" Text="{Binding OperationType}" MinWidth="30" FontSize="14" FontWeight="Bold" IsEnabled="{Binding IsEditMode}" />
                 <TextBlock Margin="10,0,0,0" FontSize="15" Text="{Binding OperationTypeName}"/>
             </StackPanel>
         </StackPanel>
-        <TextBox Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="1" Width="100" Height="24" Text="{Binding Amount, StringFormat=F2 }" FontSize="14" FontWeight="Bold" IsEnabled="True" TextAlignment="Right" Visibility="{Binding IsEditMode, Converter={StaticResource VisConverter}}"/>
-        <TextBox Grid.Column="2" Grid.Row="1" Width="100" Height="24" Text="{Binding AmountIn, StringFormat=F2, Mode=OneWay}" FontSize="14" FontWeight="Bold" IsEnabled="False" TextAlignment="Right" Visibility="{Binding IsNotEditMode, Converter={StaticResource VisConverter}}"/>
-        <TextBox Grid.Column="3" Grid.Row="1" Width="100" Height="24" Text="{Binding AmountOut, StringFormat=F2, Mode=OneWay }" FontSize="14" FontWeight="Bold" IsEnabled="False" TextAlignment="Right" Visibility="{Binding IsNotEditMode, Converter={StaticResource VisConverter}}"/>
-        <Button Grid.Column="4" Grid.Row="0" Grid.RowSpan="2" Margin="5,0,0,0" Width="50" Height="40" VerticalAlignment="Bottom" Content="Edycja" Command="{Binding StartEdit}" Visibility="{Binding IsNotEditMode, Converter={StaticResource VisConverter}}"/>
-        <Button Grid.Column="4" Grid.Row="0" Grid.RowSpan="2" Margin="5,0,0,0" Width="50" Height="40" VerticalAlignment="Bottom" Content="Zakończ" Command="{Binding EndEdit}" Visibility="{Binding IsEditMode, Converter={StaticResource VisConverter}}"/>
-        <Button Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Margin="5,0,0,0" Width="100" Height="40" VerticalAlignment="Bottom" Command="{Binding ToggleAction}" Background="{Binding Action, Converter={StaticResource Act2ColConverter}}">
+        <TextBox Name="txbData" Grid.Column="0" Grid.Row="1" Height="24" Text="{Binding Date, Converter={StaticResource DateConverter}}" FontSize="14" FontWeight="Bold" IsEnabled="{Binding IsEditMode}"/>
+        <Button Grid.Column="1" Grid.Row="1" Width="19" Height="23" Margin="0,1,0,0" Command="{Binding Expand}" Visibility="{Binding IsCollapsed, Converter={StaticResource VisConverter}}">
+            <TextBlock Text="+" FontWeight="Bold" FontSize="16" Margin="0,-5,0,0"/>
+        </Button>
+        <Button Grid.Column="1" Grid.Row="1" Width="19" Height="23" Margin="0,1,0,0" Command="{Binding Collapse}" Visibility="{Binding IsExpanded, Converter={StaticResource VisConverter}}">
+            <TextBlock Text="-" FontWeight="Bold" FontSize="16" Margin="0,-5,0,0"/>
+        </Button>
+        <TextBox Grid.Column="2" Grid.Row="1" Height="24" Text="{Binding Description}" FontSize="14" FontWeight="Bold" IsEnabled="{Binding IsEditMode}" />
+        <TextBox Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="1" Width="100" Height="24" Text="{Binding Amount, StringFormat=F2 }" FontSize="14" FontWeight="Bold" IsEnabled="True" TextAlignment="Right" Visibility="{Binding IsEditMode, Converter={StaticResource VisConverter}}"/>
+        <TextBox Grid.Column="3" Grid.Row="1" Width="100" Height="24" Text="{Binding AmountIn, StringFormat=F2, Mode=OneWay}" FontSize="14" FontWeight="Bold" IsEnabled="False" TextAlignment="Right" Visibility="{Binding IsNotEditMode, Converter={StaticResource VisConverter}}"/>
+        <TextBox Grid.Column="4" Grid.Row="1" Width="100" Height="24" Text="{Binding AmountOut, StringFormat=F2, Mode=OneWay }" FontSize="14" FontWeight="Bold" IsEnabled="False" TextAlignment="Right" Visibility="{Binding IsNotEditMode, Converter={StaticResource VisConverter}}"/>
+        <Button Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Margin="5,0,0,0" Width="50" Height="40" VerticalAlignment="Bottom" Content="Edycja" Command="{Binding StartEdit}" Visibility="{Binding IsNotEditMode, Converter={StaticResource VisConverter}}"/>
+        <Button Grid.Column="5" Grid.Row="0" Grid.RowSpan="2" Margin="5,0,0,0" Width="50" Height="40" VerticalAlignment="Bottom" Content="Zakończ" Command="{Binding EndEdit}" Visibility="{Binding IsEditMode, Converter={StaticResource VisConverter}}"/>
+        <Button Grid.Column="6" Grid.Row="0" Grid.RowSpan="2" Margin="5,0,0,0" Width="100" Height="40" VerticalAlignment="Bottom" Command="{Binding ToggleAction}" Background="{Binding Action, Converter={StaticResource Act2ColConverter}}">
             <TextBlock Text="{Binding ActionString}" TextWrapping="WrapWithOverflow" />
         </Button>
-        <TextBox Grid.Column="1" Grid.Row="1" Height="24" Text="{Binding Description}" FontSize="14" FontWeight="Bold" IsEnabled="{Binding IsEditMode}" />
-        <StackPanel Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="2" Orientation="Vertical">
-            <TextBox Grid.Column="0" Grid.Row="0" Text="{Binding FullDescription}" MaxWidth="550" HorizontalAlignment="Left" TextWrapping="WrapWithOverflow" Background="Transparent" Style="{StaticResource HiddenEmptyTextBox}" BorderThickness="0" IsReadOnly="True" />
-            <TextBox Grid.Column="0" Grid.Row="1" Text="{Binding BankOperationDescription}" HorizontalAlignment="Left" Background="Transparent" Style="{StaticResource HiddenEmptyTextBox}" BorderThickness="0" IsReadOnly="True" />
+        <StackPanel Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="2" Orientation="Vertical" Visibility="{Binding IsExpanded, Converter={StaticResource VisConverter}}">
+            <TextBox Grid.Column="0" Grid.Row="0" Text="{Binding FullDescription}" MaxWidth="550" HorizontalAlignment="Left" TextWrapping="WrapWithOverflow" Background="Transparent"  BorderThickness="0" IsReadOnly="True" />
+            <TextBox Grid.Column="0" Grid.Row="1" Text="{Binding BankOperationDescription}" HorizontalAlignment="Left" Background="Transparent" BorderThickness="0" IsReadOnly="True" />
         </StackPanel>
 
 

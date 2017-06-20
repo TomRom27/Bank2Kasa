@@ -9,7 +9,7 @@
              xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
 
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="750"
+             d:DesignHeight="400" d:DesignWidth="850"
              d:DataContext="{d:DesignInstance Type=vm:OperationListViewModel, IsDesignTimeCreatable=True}"
              >
     <UserControl.Resources>
@@ -102,7 +102,7 @@
                 <HeaderedItemsControl Name="icOps"  ItemsSource="{Binding Operations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AlternationCount="2">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="{x:Type local:OperationView3}">
-                            <local:OperationView3 Margin="2,2,-1,2" Background="Beige" >
+                            <local:OperationView3 Margin="2,2,2,2" Background="Beige" >
                                 <local:OperationView3.ContextMenu>
                                     <ContextMenu >
                                         <MenuItem Header="Usuń" Command="{Binding DeleteSelf}"/>

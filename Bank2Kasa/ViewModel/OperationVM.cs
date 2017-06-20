@@ -33,6 +33,7 @@ namespace Bank2Kasa.ViewModel
                 FullDescription = "Full descriptino of the empty operation when we test long";
                 BankOperationDescription = "aasdasdasdsa asdassaddasd ";
             }
+            IsExpanded = false;
         }
 
         [GalaSoft.MvvmLight.Ioc.PreferredConstructor]
@@ -48,6 +49,9 @@ namespace Bank2Kasa.ViewModel
         public RelayCommand EndEdit { get; set; }
         public RelayCommand DeleteSelf { get; set; }
         public RelayCommand CopySelf { get; set; }
+        public RelayCommand Expand { get; set; }
+        public RelayCommand Collapse { get; set; }
+
 
         #endregion
 
@@ -60,6 +64,8 @@ namespace Bank2Kasa.ViewModel
             EndEdit = new RelayCommand(() => Edit(false));
             DeleteSelf = new RelayCommand(Delete);
             CopySelf = new RelayCommand(Copy);
+            Expand = new RelayCommand(ExpandCollapse);
+            Collapse = new RelayCommand(ExpandCollapse);
         }
 
         private void Delete()
@@ -80,6 +86,11 @@ namespace Bank2Kasa.ViewModel
         private void Edit(bool start)
         {
             IsEditMode = !IsEditMode;
+        }
+
+        private void ExpandCollapse()
+        {
+            IsExpanded = !IsExpanded;
         }
         #endregion
 
@@ -107,6 +118,28 @@ namespace Bank2Kasa.ViewModel
             get
             {
                 return !isEditMode;
+            }
+        }
+
+        private bool isExpanded;
+        public bool IsExpanded
+        {
+            get
+            {
+                return isExpanded;
+            }
+            set
+            {
+                isExpanded = value;
+                RaisePropertyChanged(nameof(IsExpanded));
+                RaisePropertyChanged(nameof(IsCollapsed));
+            }
+        }
+        public bool IsCollapsed
+        {
+            get
+            {
+                return !isExpanded;
             }
         }
 
