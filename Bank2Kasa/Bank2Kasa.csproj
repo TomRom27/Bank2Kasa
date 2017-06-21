@@ -156,10 +156,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Data\%24TYP.DAT">
+    <None Include="Data\RR\%24TYP.DAT" />
+    <None Include="Data\TR\%24TYP.DAT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Data\OPR2017.DAT">
+    <None Include="Data\RR\OPR2017.DAT" />
+    <None Include="Data\TR\OPR2017.DAT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="mbank.csv">

@@ -100,9 +100,11 @@ namespace Bank2Kasa.ViewModel
 
         #region Commands
 
-        public RelayCommand Save { get; set; }
+        public RelayCommand Save1 { get; set; }
+        public RelayCommand Save2 { get; set; }
         public RelayCommand Import { get; set; }
-        public RelayCommand SelectKasa { get; set; }
+        public RelayCommand SelectKasa1 { get; set; }
+        public RelayCommand SelectKasa2 { get; set; }
         public RelayCommand SelectImport { get; set; }
         public RelayCommand ShowSum { get; set; }
         public RelayCommand CancelSaving { get; set; }
@@ -112,9 +114,11 @@ namespace Bank2Kasa.ViewModel
 
         private void CreateCommands()
         {
-            Save = new RelayCommand(SaveData);
+            Save1 = new RelayCommand(SaveData1);
+            Save2 = new RelayCommand(SaveData2);
             Import = new RelayCommand(ImportData);
-            SelectKasa = new RelayCommand(SelectKasaFolder);
+            SelectKasa1 = new RelayCommand(SelectKasaFolder1);
+            SelectKasa2 = new RelayCommand(SelectKasaFolder2);
             SelectImport = new RelayCommand(SelectImportFile);
             ShowSum = new RelayCommand(ShowOperationSum);
             CancelSaving = new RelayCommand(CancelPendigSave);
@@ -138,11 +142,17 @@ namespace Bank2Kasa.ViewModel
             operationService.SaveSettings(Settings);
         }
 
-        private void SelectKasaFolder()
+        private void SelectKasaFolder1()
         {
-            var newFolder = dialogService.SelectFolder("Wybierz katalog z plikiem Kasy", Settings.KasaFolder);
+            var newFolder = dialogService.SelectFolder("Wybierz katalog z plikiem Kasy", Settings.KasaFolder1);
             if (!String.IsNullOrEmpty(newFolder))
-                Settings.KasaFolder = newFolder;
+                Settings.KasaFolder1 = newFolder;
+        }
+        private void SelectKasaFolder2()
+        {
+            var newFolder = dialogService.SelectFolder("Wybierz katalog z plikiem Kasy", Settings.KasaFolder1);
+            if (!String.IsNullOrEmpty(newFolder))
+                Settings.KasaFolder2 = newFolder;
         }
 
         private void SelectImportFile()
@@ -171,7 +181,7 @@ namespace Bank2Kasa.ViewModel
             .StartNew(() =>
             {
                 IsImporting = true;
-                Operations = operationService.ImportFromFile(SupportedImport.mBankCsv, Settings.ImportFile, Settings.Trashold, Settings.AggregateDay);
+                Operations = operationService.ImportFromFile(SupportedImport.mBankCsv, Settings.ImportFile, Settings.Trashold1, Settings.AggregateDay);
 
             })
             /* when completed, display response */
@@ -196,20 +206,42 @@ namespace Bank2Kasa.ViewModel
             IsSaving = false;
         }
 
-        private void SaveData()
+        private void SaveData1()
         {
-            bool isSuccess = false;
             SaveOperationArgument arg = new SaveOperationArgument()
             {
                 ImportFilename = Settings.ImportFile,
+                KasaFolder = Settings.KasaFolder1,
                 KasaYear = Settings.Year,
                 OperationList = Operations,
                 ProgressCallback = UpdateSavingProgress,
-                BackupImportFile = true, // todo - get from UI
-                BackupDatFile = true, // todo - get from UI
-                RemoveIxFile = true, // todo - get from UI
+                BackupImportFile = Settings.BackupImportFile, 
+                BackupDatFile = Settings.BackupDatFile, 
+                RemoveIxFile = Settings.RemoveIxFile, 
                 IsCancelled = false
             };
+            SaveData(arg);
+        }
+
+        private void SaveData2()
+        {
+            SaveOperationArgument arg = new SaveOperationArgument()
+            {
+                ImportFilename = Settings.ImportFile,
+                KasaFolder = Settings.KasaFolder2,
+                KasaYear = Settings.Year,
+                OperationList = Operations,
+                ProgressCallback = UpdateSavingProgress,
+                BackupImportFile = Settings.BackupImportFile,
+                BackupDatFile = Settings.BackupDatFile,
+                RemoveIxFile = Settings.RemoveIxFile,
+                IsCancelled = false
+            };
+            SaveData(arg);
+        }
+
+        private void SaveData(SaveOperationArgument arg)
+        {
 
             SaveSettings();
 

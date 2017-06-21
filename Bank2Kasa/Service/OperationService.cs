@@ -114,7 +114,7 @@ namespace Bank2Kasa.Service
             if (!System.IO.File.Exists(SettingsFile))
             {
                 System.Diagnostics.Trace.WriteLine("File settigns not found: " + SettingsFile);
-                return new OperationListSettings() { ImportFile = @"c:\desktop\my.import.txt", KasaFolder = @"c:\desktop", Trashold = "01", Year = 2017 };
+                return new OperationListSettings() { ImportFile = @"c:\desktop\my.import.txt", KasaFolder1 = @"c:\desktop", Trashold1 = "01", Year = 2017 };
             }
 
             var content = System.IO.File.ReadAllLines(SettingsFile);
@@ -209,7 +209,7 @@ namespace Bank2Kasa.Service
         private void UpdateKasa(SaveOperationArgument arg)
         {
             string DatBackupExt = "BAD";
-            using (OperationStore store = new OperationStore(arg.KasaYear, _KasaFolder))
+            using (OperationStore store = new OperationStore(arg.KasaYear, arg.KasaFolder))
             {
                 if (arg.BackupDatFile)
                 {
@@ -326,6 +326,7 @@ namespace Bank2Kasa.Service
     public class SaveOperationArgument
     {
         public string ImportFilename;
+        public string KasaFolder;
         public int KasaYear;
         public IList<OperationVM> OperationList;
         public Action<string, bool> ProgressCallback;
