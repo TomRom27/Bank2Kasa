@@ -23,7 +23,7 @@ namespace Bank2Kasa.ViewModel
 
             if (GalaSoft.MvvmLight.ViewModelBase.IsInDesignModeStatic)
             {
-                Operations.Add(new OperationVM() { Action = WUKasa.ActionToDo.Add2KasaAndRemoveFromImport, Amount = 100, OperationType="10", Description = "Operacja przychodowa", Date = DateTime.Today });
+                Operations.Add(new OperationVM() { Action = WUKasa.ActionToDo.Add2KasaAndRemoveFromImport, Amount = 100, OperationType = "10", Description = "Operacja przychodowa", Date = DateTime.Today });
                 Operations.Add(new OperationVM() { Action = WUKasa.ActionToDo.Add2Kasa, Amount = 100, OperationType = "15", Description = "Płatność przelewem", Date = DateTime.Today });
 
             }
@@ -102,7 +102,8 @@ namespace Bank2Kasa.ViewModel
 
         public RelayCommand Save1 { get; set; }
         public RelayCommand Save2 { get; set; }
-        public RelayCommand Import { get; set; }
+        public RelayCommand Import1 { get; set; }
+        public RelayCommand Import2 { get; set; }
         public RelayCommand SelectKasa1 { get; set; }
         public RelayCommand SelectKasa2 { get; set; }
         public RelayCommand SelectImport { get; set; }
@@ -116,7 +117,8 @@ namespace Bank2Kasa.ViewModel
         {
             Save1 = new RelayCommand(SaveData1);
             Save2 = new RelayCommand(SaveData2);
-            Import = new RelayCommand(ImportData);
+            Import1 = new RelayCommand(ImportData1);
+            Import2 = new RelayCommand(ImportData2);
             SelectKasa1 = new RelayCommand(SelectKasaFolder1);
             SelectKasa2 = new RelayCommand(SelectKasaFolder2);
             SelectImport = new RelayCommand(SelectImportFile);
@@ -173,7 +175,17 @@ namespace Bank2Kasa.ViewModel
             dialogService.ShowMessage($"Suma\t={sAmount,10:N2}\nNa Plus\t={sMoneyIn,10:N2}\nNa Minus\t={sMoneyOut,10:N2}", "Suma");
         }
 
-        private void ImportData()
+        private void ImportData1()
+        {
+            ImportData(Settings.Trashold1);
+        }
+
+        private void ImportData2()
+        {
+            ImportData(Settings.Trashold2);
+        }
+
+        private void ImportData(string Trashold)
         {
             dialogService.SetBusy();
             Task.Factory
@@ -181,7 +193,7 @@ namespace Bank2Kasa.ViewModel
             .StartNew(() =>
             {
                 IsImporting = true;
-                Operations = operationService.ImportFromFile(SupportedImport.mBankCsv, Settings.ImportFile, Settings.Trashold1, Settings.AggregateDay);
+                Operations = operationService.ImportFromFile(SupportedImport.mBankCsv, Settings.ImportFile, Trashold, Settings.AggregateDay);
 
             })
             /* when completed, display response */
@@ -215,9 +227,9 @@ namespace Bank2Kasa.ViewModel
                 KasaYear = Settings.Year,
                 OperationList = Operations,
                 ProgressCallback = UpdateSavingProgress,
-                BackupImportFile = Settings.BackupImportFile, 
-                BackupDatFile = Settings.BackupDatFile, 
-                RemoveIxFile = Settings.RemoveIxFile, 
+                BackupImportFile = Settings.BackupImportFile,
+                BackupDatFile = Settings.BackupDatFile,
+                RemoveIxFile = Settings.RemoveIxFile,
                 IsCancelled = false
             };
             SaveData(arg);
@@ -252,19 +264,20 @@ namespace Bank2Kasa.ViewModel
                 IsSaving = true;
                 operationService.Save(arg);
                 IsSaving = false;
-                System.Windows.Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background, 
-                    new Action(() => {
-                                int i = 0;
-                                while (i <= arg.OperationList.Count - 1)
-                                {
-                                    if (arg.OperationList[i].CanDelete)
-                                        arg.OperationList.RemoveAt(i);
-                                    else
-                                        i++;
-                                }
+                System.Windows.Application.Current.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background,
+                    new Action(() =>
+                    {
+                        int i = 0;
+                        while (i <= arg.OperationList.Count - 1)
+                        {
+                            if (arg.OperationList[i].CanDelete)
+                                arg.OperationList.RemoveAt(i);
+                            else
+                                i++;
+                        }
 
-                            })
-                );               
+                    })
+                );
 
             })
             /* when completed, display response */
@@ -303,7 +316,7 @@ namespace Bank2Kasa.ViewModel
         {
 
             OperationVM newOperation = message.Operation.Clone();
-        
+
             var currentIndex = Operations.IndexOf(message.Operation);
             if (currentIndex >= 0)
             {
