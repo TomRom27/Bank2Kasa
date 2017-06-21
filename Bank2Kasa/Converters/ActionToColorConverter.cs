@@ -20,11 +20,11 @@ namespace Bank2Kasa.Converters
                 case ActionToDo.Add2KasaAndRemoveFromImport:
                     return new SolidColorBrush(Color.FromRgb(204,153,102)); 
                 case ActionToDo.AnnotateInKasa:
-                    return new SolidColorBrush(Color.FromRgb(249, 242, 236)); 
+                    return new SolidColorBrush(Color.FromRgb(242, 230, 217)); 
                 case ActionToDo.RemoveFromImport:
-                    return new SolidColorBrush(Color.FromRgb(223, 191, 159)); 
+                    return null;//  new SolidColorBrush(Color.FromRgb(172, 115, 57)); 
                 case ActionToDo.Add2Kasa:
-                    return new SolidColorBrush(Color.FromRgb(172, 115, 57)); 
+                    return new SolidColorBrush(Color.FromRgb(223, 191, 159));
                 default:
                     return null;
             }
