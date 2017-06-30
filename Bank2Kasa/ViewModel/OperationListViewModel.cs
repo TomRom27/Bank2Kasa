@@ -142,6 +142,7 @@ namespace Bank2Kasa.ViewModel
         private void SaveSettings()
         {
             operationService.SaveSettings(Settings);
+            GalaSoft.MvvmLight.Messaging.Messenger.Default.Send(new Service.Messages.SettingsChanged(Settings));
         }
 
         private void SelectKasaFolder1()
