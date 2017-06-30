@@ -47,6 +47,7 @@ namespace Bank2Kasa.ViewModel
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<OperationListViewModel>();
+            SimpleIoc.Default.Register<KasaOperationListViewModel>();
         }
 
         public MainViewModel Main
@@ -62,6 +63,16 @@ namespace Bank2Kasa.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<OperationListViewModel>();
+
+            }
+        }
+
+
+        public KasaOperationListViewModel KasaOperationsViewModel
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<KasaOperationListViewModel>();
 
             }
         }

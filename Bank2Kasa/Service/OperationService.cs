@@ -91,8 +91,9 @@ namespace Bank2Kasa.Service
             {
                 case SupportedImport.mBankCsv:
                     {
+                        var imported = ImportFromMBankCsv(dataFilename, trashold, aggregateDay);
                         System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("yyyy.MM.dd HH.mm.ss") + " Import z pliku - koniec");
-                        return ImportFromMBankCsv(dataFilename, trashold, aggregateDay);
+                        return imported;
                     }
                 default: return new ObservableCollection<OperationVM>();
             }
@@ -104,6 +105,9 @@ namespace Bank2Kasa.Service
             var importer = new mBankData.CsvExportProvider();
 
             list = importer.Import(dataFilename, trashold, aggregateDay);
+
+            foreach (var o in list)
+                o.FinanceCode =  OperationVM.ImportFinanceCodeTag;
 
             return new ObservableCollection<OperationVM>(list.Select(oi => new OperationVM(oi)).ToList());
         }

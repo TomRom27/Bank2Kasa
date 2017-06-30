@@ -17,6 +17,8 @@ namespace Bank2Kasa.ViewModel
 {
     public class OperationVM : GalaSoft.MvvmLight.ViewModelBase
     {
+        public const string ImportFinanceCodeTag = "IMPORT";
+
         private Operation operation;
         private IOperationService operationService;
 
@@ -143,6 +145,14 @@ namespace Bank2Kasa.ViewModel
             }
         }
 
+        public bool IsFromImport
+        {
+            get
+            {
+                return Operation.FinanceCode.Equals(OperationVM.ImportFinanceCodeTag, StringComparison.InvariantCultureIgnoreCase);
+            }
+        }
+
         private ActionToDo action { get; set; }
         public ActionToDo Action
         {
@@ -179,6 +189,14 @@ namespace Bank2Kasa.ViewModel
             }
         }
 
+        public Decimal Balance
+        {
+            get
+            {
+                return operation.Balance;
+            }
+        }
+
         private bool canDelete;
         public bool CanDelete
         {
@@ -204,6 +222,12 @@ namespace Bank2Kasa.ViewModel
                 operation.Date = value;
                 RaisePropertyChanged(nameof(Date));
             }
+        }
+
+
+        public long DateAndMax
+        {
+            get { return operation.Date.Ticks + operation.Max; }
         }
 
         public string OperationType

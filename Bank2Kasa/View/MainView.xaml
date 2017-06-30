@@ -9,8 +9,11 @@
              DataContext="{Binding Main, Source={StaticResource Locator}}">
     <Grid>
         <TabControl>
-            <TabItem Header="Operacje">
+            <TabItem Header="Importowanie">
                 <local:OperationListView DataContext="{Binding OperationsViewModel, Source={StaticResource Locator}}"/>
+            </TabItem>
+            <TabItem Header="Kasa">
+                <local:KasaOperationListView DataContext="{Binding KasaOperationsViewModel, Source={StaticResource Locator}}"/>
             </TabItem>
         </TabControl>
     </Grid>

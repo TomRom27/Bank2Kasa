@@ -11,4 +11,5 @@ namespace Bank2Kasa.ViewModel
         mBankCsv
     }
 
+
 }

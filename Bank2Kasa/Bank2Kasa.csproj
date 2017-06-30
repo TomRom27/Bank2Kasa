@@ -85,14 +85,19 @@
     <Compile Include="Converters\PolishDateConverter.cs" />
     <Compile Include="Service\IOHelper.cs" />
     <Compile Include="Service\Messages\OnOperationAction.cs" />
+    <Compile Include="Service\Messages\SettingsChanged.cs" />
     <Compile Include="Service\OperationService.cs" />
     <Compile Include="Service\SerializationHelper.cs" />
+    <Compile Include="ViewModel\KasaOperationListViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\OperationListViewModel.cs" />
     <Compile Include="ViewModel\OperationVM.cs" />
     <Compile Include="ViewModel\Enums.cs" />
     <Compile Include="ViewModel\OperationListSettings.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\KasaOperationListView.xaml.cs">
+      <DependentUpon>KasaOperationListView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
@@ -120,6 +125,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\KasaOperationListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
