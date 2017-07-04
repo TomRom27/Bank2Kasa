@@ -49,11 +49,6 @@ namespace Bank2Kasa.ViewModel
             LoadSettings();
         }
 
-        private void CreateCommands()
-        {
-            ShowKasa1 = new RelayCommand(ShowKasa1Operations);
-            ShowKasa2 = new RelayCommand(ShowKasa2Operations);
-        }
 
         ObservableCollection<OperationVM> _Operations;
         public ObservableCollection<OperationVM> Operations
@@ -118,7 +113,16 @@ namespace Bank2Kasa.ViewModel
         public RelayCommand ShowKasa1 { get; set; }
         public RelayCommand ShowKasa2 { get; set; }
 
+        public RelayCommand SumOfSelected { get; set; }
+        public RelayCommand SelectUnselectAll { get; set; }
 
+        private void CreateCommands()
+        {
+            ShowKasa1 = new RelayCommand(ShowKasa1Operations);
+            ShowKasa2 = new RelayCommand(ShowKasa2Operations);
+            SumOfSelected = new RelayCommand(SelectAndSum);
+            SelectUnselectAll = new RelayCommand(SelectUnselectAllOperations);
+        }
 
         private void PopulateMonths()
         {
@@ -145,6 +149,26 @@ namespace Bank2Kasa.ViewModel
         {
             Settings = operationService.LoadSettings();
         }
+
+        private void SelectUnselectAllOperations()
+        {
+            bool state;
+            // determine whether we should un- or select all operations
+            if (Operations.Any((o) => o.IsChecked == true))
+                state = false;
+            else
+                state = true;
+            foreach (var o in Operations)
+                o.IsChecked = state;
+        }
+
+        private void SelectAndSum()
+        {
+            // todo
+            // select - if nothing selected
+            // then sum up
+        }
+
 
         private void ShowKasa1Operations()
         {

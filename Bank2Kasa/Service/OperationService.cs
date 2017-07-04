@@ -107,7 +107,7 @@ namespace Bank2Kasa.Service
             list = importer.Import(dataFilename, trashold, aggregateDay);
 
             foreach (var o in list)
-                o.FinanceCode =  OperationVM.ImportFinanceCodeTag;
+                o.FinanceCode =  Properties.Settings.Default.ImportTag;
 
             return new ObservableCollection<OperationVM>(list.Select(oi => new OperationVM(oi)).ToList());
         }

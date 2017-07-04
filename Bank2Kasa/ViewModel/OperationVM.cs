@@ -17,8 +17,6 @@ namespace Bank2Kasa.ViewModel
 {
     public class OperationVM : GalaSoft.MvvmLight.ViewModelBase
     {
-        public const string ImportFinanceCodeTag = "IMPORT";
-
         private Operation operation;
         private IOperationService operationService;
 
@@ -145,11 +143,25 @@ namespace Bank2Kasa.ViewModel
             }
         }
 
+        private bool isChecked;
+        public bool IsChecked
+        {
+            get
+            {
+                return isChecked;
+            }
+            set
+            {
+                isChecked = value;
+                RaisePropertyChanged(nameof(IsChecked));
+            }
+        }
+
         public bool IsFromImport
         {
             get
             {
-                return Operation.FinanceCode.Equals(OperationVM.ImportFinanceCodeTag, StringComparison.InvariantCultureIgnoreCase);
+                return Operation.FinanceCode.Equals(Properties.Settings.Default.ImportTag, StringComparison.InvariantCultureIgnoreCase);
             }
         }
 

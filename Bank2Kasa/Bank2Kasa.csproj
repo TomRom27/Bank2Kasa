@@ -95,6 +95,7 @@
     <Compile Include="ViewModel\Enums.cs" />
     <Compile Include="ViewModel\OperationListSettings.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\BindingProxy.cs" />
     <Compile Include="View\KasaOperationListView.xaml.cs">
       <DependentUpon>KasaOperationListView.xaml</DependentUpon>
     </Compile>
