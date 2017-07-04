@@ -38,6 +38,7 @@ namespace Bank2Kasa.ViewModel
             PopulateMonths();
 
             IsReading = true;
+            IsAllSelected = false;
         }
 
 
@@ -110,6 +111,18 @@ namespace Bank2Kasa.ViewModel
             }
         }
 
+
+        private bool _IsAllSelected;
+        public bool IsAllSelected
+        {
+            get { return _IsAllSelected; }
+            set
+            {
+                _IsAllSelected = value;
+                RaisePropertyChanged(nameof(IsAllSelected));
+            }
+        }
+
         public RelayCommand ShowKasa1 { get; set; }
         public RelayCommand ShowKasa2 { get; set; }
 
@@ -128,10 +141,10 @@ namespace Bank2Kasa.ViewModel
         {
             Months.Clear();
             Months.Add("<bez fitrowania>");
-            for(int i=1; i<=12;i++)
+            for (int i = 1; i <= 12; i++)
             {
                 Months.Add(new DateTime(1, i, 1).ToString("MMMM"));
-            }            
+            }
         }
 
         private void SubscribeToMessages()
@@ -164,11 +177,30 @@ namespace Bank2Kasa.ViewModel
 
         private void SelectAndSum()
         {
-            // todo
-            // select - if nothing selected
-            // then sum up
+            // if nothing is selected yet, select imported in the currently selected 
+            if (!Operations.Any((o) => o.IsChecked == true))
+                SelectImportedInMonth(SelectedMonthIndex);
+
+            decimal sAmount, sMoneyIn, sMoneyOut;
+            sAmount = sMoneyIn = sMoneyOut = 0;
+            foreach (var o in Operations)
+                if (o.IsChecked)
+                {
+                    sMoneyIn = +o.MoneyIn;
+                    sMoneyOut = +o.MoneyOut;
+                }
+            sAmount = sMoneyIn - sMoneyOut;
+            dialogService.ShowMessage($"Suma\t={sAmount,10:N2}\nNa Plus\t={sMoneyIn,10:N2}\nNa Minus\t={sMoneyOut,10:N2}", "Suma");
         }
 
+        private void SelectImportedInMonth(int selectedMonthIndex)
+        {
+            foreach (var o in Operations)
+                if ((selectedMonthIndex == 0) ||
+                    (selectedMonthIndex == o.Date.Month))
+                    o.IsChecked = true;
+            IsAllSelected = true;
+        }
 
         private void ShowKasa1Operations()
         {
@@ -194,11 +226,11 @@ namespace Bank2Kasa.ViewModel
                                     using (OperationStore store = new OperationStore(KasaYear, KasaFolder))
                                     {
                                         List<Operation> list = new List<Operation>();
-                                        store.ForEach((o, i) => 
+                                        store.ForEach((o, i) =>
                                             {
-                                                if ((month==0) ||
-                                                     ((o.Date.Month>=month-1) && (o.Date.Month <= month + 1)))
-                                                list.Add(o);
+                                                if ((month == 0) ||
+                                                     ((o.Date.Month >= month - 1) && (o.Date.Month <= month + 1)))
+                                                    list.Add(o);
                                             }
                                         );
                                         list.Sort((o1, o2) => { return o1.Date.CompareTo(o2.Date); });

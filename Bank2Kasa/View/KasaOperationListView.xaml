@@ -77,7 +77,7 @@
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn Binding="{Binding IsChecked}">
                         <DataGridCheckBoxColumn.Header>
-                            <CheckBox  Command="{Binding Data.SelectUnselectAll, Source={StaticResource proxy}}"/>
+                            <CheckBox IsChecked="{Binding Data.IsAllSelected, Source={StaticResource proxy}}" Command="{Binding Data.SelectUnselectAll, Source={StaticResource proxy}}"/>
                         </DataGridCheckBoxColumn.Header>
                     </DataGridCheckBoxColumn>
                     <DataGridTemplateColumn Header="Data" IsReadOnly="True" SortMemberPath="DateAndMax" >
@@ -88,11 +88,32 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Typ" Binding="{Binding  OperationType}" />
-                    <DataGridTextColumn Header="Opis" Binding="{Binding Description}" />
-                    <DataGridTextColumn Header="Przychód" Binding="{Binding MoneyIn, StringFormat=F2}" />
-                    <DataGridTextColumn Header="Rozchód" Binding="{Binding MoneyOut, StringFormat=F2}" />
+                    <DataGridTextColumn Header="Opis" Width="*" Binding="{Binding Description}" />
+                    <DataGridTextColumn Header="Przychód" Binding="{Binding MoneyIn, StringFormat=F2}" >
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextAlignment" Value="Right"/>
+                                <Setter Property="MinWidth" Value="70"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Rozchód" Binding="{Binding MoneyOut, StringFormat=F2}" >
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextAlignment" Value="Right"/>
+                                <Setter Property="MinWidth" Value="70"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                    <DataGridTextColumn Header="Saldo" Binding="{Binding  Balance, StringFormat=F2}" />
+                    <DataGridTextColumn Header="Saldo" Binding="{Binding  Balance, StringFormat=F2}" >
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="TextAlignment" Value="Right"/>
+                                <Setter Property="MinWidth" Value="70"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
