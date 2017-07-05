@@ -31,5 +31,53 @@ namespace Bank2Kasa.Properties {
                 return ((string)(this["ImportTag"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double MWWidth {
+            get {
+                return ((double)(this["MWWidth"]));
+            }
+            set {
+                this["MWWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double MWHeight {
+            get {
+                return ((double)(this["MWHeight"]));
+            }
+            set {
+                this["MWHeight"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double MWLeft {
+            get {
+                return ((double)(this["MWLeft"]));
+            }
+            set {
+                this["MWLeft"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public double MWTop {
+            get {
+                return ((double)(this["MWTop"]));
+            }
+            set {
+                this["MWTop"] = value;
+            }
+        }
     }
 }
