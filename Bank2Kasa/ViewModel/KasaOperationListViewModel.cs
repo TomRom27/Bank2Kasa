@@ -112,6 +112,17 @@ namespace Bank2Kasa.ViewModel
         }
 
 
+        private OperationVM _FirstFromSelectedMonth;
+        public OperationVM FirstFromSelectedMonth
+        {
+            get { return _FirstFromSelectedMonth; }
+            set
+            {
+                _FirstFromSelectedMonth = value;
+                RaisePropertyChanged(nameof(FirstFromSelectedMonth));
+            }
+        }
+
         private bool _IsAllSelected;
         public bool IsAllSelected
         {
@@ -186,8 +197,8 @@ namespace Bank2Kasa.ViewModel
             foreach (var o in Operations)
                 if (o.IsChecked)
                 {
-                    sMoneyIn = +o.MoneyIn;
-                    sMoneyOut = +o.MoneyOut;
+                    sMoneyIn += o.MoneyIn;
+                    sMoneyOut += o.MoneyOut;
                 }
             sAmount = sMoneyIn - sMoneyOut;
             dialogService.ShowMessage($"Suma\t={sAmount,10:N2}\nNa Plus\t={sMoneyIn,10:N2}\nNa Minus\t={sMoneyOut,10:N2}", "Suma");
@@ -196,8 +207,8 @@ namespace Bank2Kasa.ViewModel
         private void SelectImportedInMonth(int selectedMonthIndex)
         {
             foreach (var o in Operations)
-                if ((selectedMonthIndex == 0) ||
-                    (selectedMonthIndex == o.Date.Month))
+                if (((selectedMonthIndex == 0) ||
+                    (selectedMonthIndex == o.Date.Month)) && o.IsFromImport)
                     o.IsChecked = true;
             IsAllSelected = true;
         }
@@ -237,6 +248,11 @@ namespace Bank2Kasa.ViewModel
                                         Operations.Clear();
 
                                         Operations = new ObservableCollection<OperationVM>(list.Select((o) => new OperationVM(o)).ToList());
+                                        // find first operation from the selected month
+                                        if (month>0)
+                                        {
+                                            FirstFromSelectedMonth = Operations.FirstOrDefault((o) => o.Date.Month == month);
+                                        }
                                     };
                                 })
                             );

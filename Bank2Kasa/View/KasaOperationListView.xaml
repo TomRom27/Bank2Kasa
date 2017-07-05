@@ -54,7 +54,7 @@
                 <Button Grid.Column="2" Grid.Row="1" Margin ="5,5,5,0" Content="Pokaż" Width="50" Command="{Binding ShowKasa2}"/>
                 <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
                     <TextBlock Text="Filtrowanie:"/>
-                    <ComboBox Margin ="5,0,5,0" ItemsSource="{Binding Months}" SelectedIndex="{Binding SelectedMonthIndex}"/>
+                    <ComboBox Name="cmbMonth" Margin ="5,0,5,0" ItemsSource="{Binding Months}" SelectedIndex="{Binding SelectedMonthIndex}"/>
                     <TextBlock Text="+/- 1 jeden miesiąc"/>
                 </StackPanel>
 
@@ -69,8 +69,8 @@
         <!-- Importing status popup - end -->
 
         <Border Margin="0,3,0,0" BorderBrush="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" BorderThickness="2" CornerRadius="5" >
-            <DataGrid Name="dgrMain" ItemsSource="{Binding Operations}" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserResizeColumns="True" 
-                            CanUserSortColumns="True" RowStyle="{StaticResource ImportedRow}" >
+            <DataGrid Name="dgrMain" ItemsSource="{Binding Operations, NotifyOnTargetUpdated=True}" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserResizeColumns="True" 
+                            CanUserSortColumns="True" RowStyle="{StaticResource ImportedRow}" SelectedItem="{Binding FirstFromSelectedMonth}" TargetUpdated="dgrMain_TargetUpdated">
                 <DataGrid.Resources>
                     <local:BindingProxy x:Key="proxy" Data="{Binding}" />
                 </DataGrid.Resources>

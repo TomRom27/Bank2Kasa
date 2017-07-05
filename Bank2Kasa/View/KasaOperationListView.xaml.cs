@@ -24,5 +24,20 @@ namespace Bank2Kasa.View
         {
             InitializeComponent();
         }
+
+
+        private void dgrMain_TargetUpdated(object sender, DataTransferEventArgs e)
+        {
+            // we want to scroll the datagrid rows to the first which is from selected month
+            if (cmbMonth.SelectedIndex > 0) // if 0 = all months, no need to scroll 
+            {
+                foreach (var item in dgrMain.Items)
+                    if (((ViewModel.OperationVM)item).Date.Month == cmbMonth.SelectedIndex)
+                    {
+                        dgrMain.ScrollIntoView(item);
+                        return;
+                    }
+            }
+        }
     }
 }
