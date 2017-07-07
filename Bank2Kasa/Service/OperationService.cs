@@ -283,8 +283,10 @@ namespace Bank2Kasa.Service
                             found.Operation.Description = found.Operation.Description.Remove(i, Operation.AnnotatedPrefix.Length);
                             // save updated operation
                             store.Put(found.Operation, found.Position);
-                            oprVM.CanDelete = true;
+
                         }
+                        // we mark the operation to remove even annotation not happend
+                        oprVM.CanDelete = true;
                     }
                     else
                     {
