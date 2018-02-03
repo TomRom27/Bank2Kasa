@@ -126,6 +126,7 @@ namespace Bank2Kasa.ViewModel
                 _Year = value;
                 RaisePropertyChanged(nameof(Year));
                 RaisePropertyChanged(nameof(KasaFile1));
+                RaisePropertyChanged(nameof(KasaFile2));
             }
         }
 
